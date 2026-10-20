@@ -1,0 +1,545 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "common.done": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "common.gotIt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Got it"
+          }
+        }
+      }
+    },
+    "home.brand.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SCRATCH CARD"
+          }
+        }
+      }
+    },
+    "home.title.unscratched": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your moment\nstarts here."
+          }
+        }
+      }
+    },
+    "home.title.scratched": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your code\nis ready."
+          }
+        }
+      }
+    },
+    "home.title.activated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're all\nset."
+          }
+        }
+      }
+    },
+    "home.description.unscratched": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One card, one reveal. A little surprise is waiting for you."
+          }
+        }
+      }
+    },
+    "home.description.scratched": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your card has been revealed. Keep your code close and activate it when you're ready."
+          }
+        }
+      }
+    },
+    "home.description.activated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your card is activated. Your code is right here whenever you need it."
+          }
+        }
+      }
+    },
+    "home.card.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your card"
+          }
+        }
+      }
+    },
+    "home.nextStep.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR NEXT STEP"
+          }
+        }
+      }
+    },
+    "home.action.scratch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scratch my card"
+          }
+        }
+      }
+    },
+    "home.action.activate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activate card"
+          }
+        }
+      }
+    },
+    "home.action.reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset card"
+          }
+        }
+      }
+    },
+    "card.status.unscratched": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UNSCRATCHED"
+          }
+        }
+      }
+    },
+    "card.status.scratched": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SCRATCHED"
+          }
+        }
+      }
+    },
+    "card.status.activated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ACTIVATED"
+          }
+        }
+      }
+    },
+    "card.eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR CARD"
+          }
+        }
+      }
+    },
+    "card.artwork.topLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A LITTLE LUCK"
+          }
+        }
+      }
+    },
+    "card.artwork.sequence": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "01 / 01"
+          }
+        }
+      }
+    },
+    "card.artwork.bottomLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GOOD THINGS AHEAD"
+          }
+        }
+      }
+    },
+    "card.code.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR CODE"
+          }
+        }
+      }
+    },
+    "scratch.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scratch your card"
+          }
+        }
+      }
+    },
+    "scratch.description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A new code is waiting beneath the surface."
+          }
+        }
+      }
+    },
+    "scratch.step": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "01 / REVEAL"
+          }
+        }
+      }
+    },
+    "scratch.code.revealing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revealing…"
+          }
+        }
+      }
+    },
+    "scratch.code.hidden": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A little mystery"
+          }
+        }
+      }
+    },
+    "scratch.code.hiddenLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR CODE IS UNDER HERE"
+          }
+        }
+      }
+    },
+    "scratch.code.revealedLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR UNIQUE CODE"
+          }
+        }
+      }
+    },
+    "scratch.prompt.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The reveal is almost yours"
+          }
+        }
+      }
+    },
+    "scratch.prompt.description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap below to uncover your unique code."
+          }
+        }
+      }
+    },
+    "scratch.action.revealed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code revealed"
+          }
+        }
+      }
+    },
+    "scratch.action.revealing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revealing your code…"
+          }
+        }
+      }
+    },
+    "scratch.action.reveal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reveal my code"
+          }
+        }
+      }
+    },
+    "scratch.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A little magic takes a moment."
+          }
+        }
+      }
+    },
+    "activation.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activate your card"
+          }
+        }
+      }
+    },
+    "activation.description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your revealed code is the key to activation."
+          }
+        }
+      }
+    },
+    "activation.step": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "02 / ACTIVATE"
+          }
+        }
+      }
+    },
+    "activation.code.hiddenStatus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reveal your card to see its code"
+          }
+        }
+      }
+    },
+    "activation.code.readyStatus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your code is ready to activate"
+          }
+        }
+      }
+    },
+    "activation.prompt.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One final step"
+          }
+        }
+      }
+    },
+    "activation.prompt.description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activate your card with the code you revealed."
+          }
+        }
+      }
+    },
+    "activation.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your card will be ready once activation succeeds."
+          }
+        }
+      }
+    },
+    "activation.error.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't activate"
+          }
+        }
+      }
+    },
+    "activation.error.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activation has failed. Try again later."
+          }
+        }
+      }
+    },
+    "activation.error.unexpected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An unexpected error occurred while activating your card. Please try again."
+          }
+        }
+      }
+    },
+    "activation.action.activate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activate my card"
+          }
+        }
+      }
+    },
+    "activation.action.activating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activating your card…"
+          }
+        }
+      }
+    },
+    "activation.action.activated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your card is already activated"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.1"
+}

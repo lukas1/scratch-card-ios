@@ -6,6 +6,7 @@ let deploymentTargets: DeploymentTargets = .iOS("26.5")
 let commonSettings: SettingsDictionary = [
     "CODE_SIGN_STYLE": "Automatic",
     "CURRENT_PROJECT_VERSION": "1",
+    "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
     "MARKETING_VERSION": "1.0",
     "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
     "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
@@ -28,6 +29,7 @@ let project = Project(
         base: [
             "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
             "LOCALIZATION_PREFERS_STRING_CATALOGS": "YES",
+            "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
         ]
     ),
     targets: [
@@ -35,11 +37,12 @@ let project = Project(
             name: appName,
             destinations: .iOS,
             product: .app,
+            productName: "Scratch_Card",
             bundleId: "com.lukas.vyletel.Scratch-Card",
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
             sources: ["Scratch Card/**/*.swift"],
-            resources: ["Scratch Card/Assets.xcassets"],
+            resources: ["Scratch Card/Resources/**/*"],
             settings: targetSettings([
                 "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
                 "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
@@ -50,7 +53,6 @@ let project = Project(
                 "INFOPLIST_KEY_UILaunchScreen_Generation": "YES",
                 "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
                 "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
-                "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
                 "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
                 "SWIFT_EMIT_LOC_STRINGS": "YES",
             ])
@@ -59,6 +61,7 @@ let project = Project(
             name: "Scratch CardTests",
             destinations: .iOS,
             product: .unitTests,
+            productName: "Scratch_CardTests",
             bundleId: "com.lukas.vyletel.Scratch-CardTests",
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
@@ -67,15 +70,15 @@ let project = Project(
             settings: targetSettings([
                 "BUNDLE_LOADER": "$(TEST_HOST)",
                 "GENERATE_INFOPLIST_FILE": "YES",
-                "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
                 "SWIFT_EMIT_LOC_STRINGS": "NO",
-                "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/Scratch Card.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Scratch Card",
+                "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/Scratch_Card.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Scratch_Card",
             ])
         ),
         .target(
             name: "Scratch CardUITests",
             destinations: .iOS,
             product: .uiTests,
+            productName: "Scratch_CardUITests",
             bundleId: "com.lukas.vyletel.Scratch-CardUITests",
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
@@ -83,7 +86,6 @@ let project = Project(
             dependencies: [.target(name: appName)],
             settings: targetSettings([
                 "GENERATE_INFOPLIST_FILE": "YES",
-                "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
                 "SWIFT_EMIT_LOC_STRINGS": "NO",
                 "TEST_TARGET_NAME": .string(appName),
             ])

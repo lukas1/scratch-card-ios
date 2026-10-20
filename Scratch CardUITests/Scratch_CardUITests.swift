@@ -23,14 +23,24 @@ final class Scratch_CardUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testCardPresentationFlow() throws {
+        XCUIDevice.shared.orientation = .portrait
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        XCTAssertTrue(app.staticTexts["UNSCRATCHED"].exists)
+        app.buttons["scratchButton"].tap()
+        XCTAssertTrue(app.staticTexts["Scratch your card"].exists)
+
+        app.buttons["revealButton"].tap()
+        XCTAssertTrue(app.staticTexts["YOUR UNIQUE CODE"].waitForExistence(timeout: 5))
+
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["SCRATCHED"].exists)
+        app.buttons["activationButton"].tap()
+        XCTAssertTrue(app.staticTexts["Activate your card"].waitForExistence(timeout: 5))
+        app.buttons["activateCardButton"].tap()
+        XCTAssertTrue(app.staticTexts["Your card is already activated"].waitForExistence(timeout: 4))
     }
 
     @MainActor
