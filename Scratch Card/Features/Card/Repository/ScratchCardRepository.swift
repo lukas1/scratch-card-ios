@@ -2,7 +2,6 @@ import Combine
 import Foundation
 
 // Local presentation state lets the screens be explored without an API or data layer.
-@MainActor
 final class ScratchCardRepository: ObservableObject {
     @Published var card: CardState = .unscratched
     @Published var isRevealing = false

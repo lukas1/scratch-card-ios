@@ -1,8 +1,15 @@
 import SwiftUI
 
-// Local presentation state lets the screens be explored without an API or data layer.
 struct ContentView: View {
-    @StateObject private var model = ScratchCardRepository()
+    @RequiredEnvironment(\.injector) private var injector: Injector
+
+    var body: some View {
+        ContentViewContent(model: injector.scratchCardModule.scratchCardRepository)
+    }
+}
+
+private struct ContentViewContent: View {
+    @ObservedObject var model: ScratchCardRepository
     @State private var path: [NavigationDestinations] = []
     @State private var isActivationPresented = false
 
