@@ -41,8 +41,7 @@ let project = Project(
             bundleId: "com.lukas.vyletel.Scratch-Card",
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
-            sources: ["Scratch Card/**/*.swift"],
-            resources: ["Scratch Card/Resources/**/*"],
+            buildableFolders: ["Scratch Card"],
             settings: targetSettings([
                 "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
                 "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
@@ -65,7 +64,7 @@ let project = Project(
             bundleId: "com.lukas.vyletel.Scratch-CardTests",
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
-            sources: ["Scratch CardTests/**/*.swift"],
+            buildableFolders: ["Scratch CardTests"],
             dependencies: [.target(name: appName)],
             settings: targetSettings([
                 "BUNDLE_LOADER": "$(TEST_HOST)",
@@ -82,7 +81,7 @@ let project = Project(
             bundleId: "com.lukas.vyletel.Scratch-CardUITests",
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
-            sources: ["Scratch CardUITests/**/*.swift"],
+            buildableFolders: ["Scratch CardUITests"],
             dependencies: [.target(name: appName)],
             settings: targetSettings([
                 "GENERATE_INFOPLIST_FILE": "YES",
