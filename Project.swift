@@ -30,6 +30,10 @@ let project = Project(
             url: "https://github.com/nalexn/ViewInspector",
             requirement: .upToNextMajor(from: "0.10.5")
         ),
+        .remote(
+            url: "https://github.com/SimplyDanny/SwiftLintPlugins",
+            requirement: .upToNextMajor(from: "0.65.1")
+        ),
     ],
     settings: .settings(
         base: [
@@ -48,6 +52,9 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
             buildableFolders: ["Scratch Card"],
+            dependencies: [
+                .package(product: "SwiftLintBuildToolPlugin", type: .plugin),
+            ],
             settings: targetSettings([
                 "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
                 "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",

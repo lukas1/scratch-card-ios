@@ -13,6 +13,8 @@ tuist generate
 
 Open `Scratch Card.xcodeproj` in Xcode. The Tuist version is pinned in `.mise.toml` so everyone generates the project with the same version.
 
+SwiftLint is integrated through Swift Package Manager for the **Scratch Card** app target. Xcode downloads the SwiftLint binary during package resolution, and the app build runs it automatically; no separate SwiftLint installation is needed. The first package resolution requires network access. The lint scope is the app source folder, configured in `.swiftlint.yml`.
+
 To edit `Project.swift` or `Tuist.swift` in Xcode with code completion, run `tuist edit`. Run `tuist generate` again after changing a manifest.
 
 To run both unit and UI tests, select the shared **Scratch Card** scheme and test in Xcode, or run:
