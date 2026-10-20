@@ -25,6 +25,12 @@ let project = Project(
         disableBundleAccessors: true,
         disableSynthesizedResourceAccessors: true
     ),
+    packages: [
+        .remote(
+            url: "https://github.com/nalexn/ViewInspector",
+            requirement: .upToNextMajor(from: "0.10.5")
+        ),
+    ],
     settings: .settings(
         base: [
             "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
@@ -65,7 +71,10 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
             buildableFolders: ["Scratch CardTests"],
-            dependencies: [.target(name: appName)],
+            dependencies: [
+                .target(name: appName),
+                .package(product: "ViewInspector", type: .runtime),
+            ],
             settings: targetSettings([
                 "BUNDLE_LOADER": "$(TEST_HOST)",
                 "GENERATE_INFOPLIST_FILE": "YES",
