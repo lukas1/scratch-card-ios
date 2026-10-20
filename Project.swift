@@ -1,0 +1,102 @@
+import ProjectDescription
+
+let appName = "Scratch Card"
+let deploymentTargets: DeploymentTargets = .iOS("26.5")
+
+let commonSettings: SettingsDictionary = [
+    "CODE_SIGN_STYLE": "Automatic",
+    "CURRENT_PROJECT_VERSION": "1",
+    "MARKETING_VERSION": "1.0",
+    "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+    "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
+    "SWIFT_VERSION": "5.0",
+    "TARGETED_DEVICE_FAMILY": "1,2",
+]
+
+func targetSettings(_ overrides: SettingsDictionary) -> Settings {
+    .settings(base: commonSettings.merging(overrides) { _, new in new })
+}
+
+let project = Project(
+    name: appName,
+    options: .options(
+        automaticSchemesOptions: .disabled,
+        disableBundleAccessors: true,
+        disableSynthesizedResourceAccessors: true
+    ),
+    settings: .settings(
+        base: [
+            "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+            "LOCALIZATION_PREFERS_STRING_CATALOGS": "YES",
+        ]
+    ),
+    targets: [
+        .target(
+            name: appName,
+            destinations: .iOS,
+            product: .app,
+            bundleId: "com.lukas.vyletel.Scratch-Card",
+            deploymentTargets: deploymentTargets,
+            infoPlist: .default,
+            sources: ["Scratch Card/**/*.swift"],
+            resources: ["Scratch Card/Assets.xcassets"],
+            settings: targetSettings([
+                "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
+                "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
+                "ENABLE_PREVIEWS": "YES",
+                "GENERATE_INFOPLIST_FILE": "YES",
+                "INFOPLIST_KEY_UIApplicationSceneManifest_Generation": "YES",
+                "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents": "YES",
+                "INFOPLIST_KEY_UILaunchScreen_Generation": "YES",
+                "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
+                "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
+                "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
+                "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
+                "SWIFT_EMIT_LOC_STRINGS": "YES",
+            ])
+        ),
+        .target(
+            name: "Scratch CardTests",
+            destinations: .iOS,
+            product: .unitTests,
+            bundleId: "com.lukas.vyletel.Scratch-CardTests",
+            deploymentTargets: deploymentTargets,
+            infoPlist: .default,
+            sources: ["Scratch CardTests/**/*.swift"],
+            dependencies: [.target(name: appName)],
+            settings: targetSettings([
+                "BUNDLE_LOADER": "$(TEST_HOST)",
+                "GENERATE_INFOPLIST_FILE": "YES",
+                "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
+                "SWIFT_EMIT_LOC_STRINGS": "NO",
+                "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/Scratch Card.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Scratch Card",
+            ])
+        ),
+        .target(
+            name: "Scratch CardUITests",
+            destinations: .iOS,
+            product: .uiTests,
+            bundleId: "com.lukas.vyletel.Scratch-CardUITests",
+            deploymentTargets: deploymentTargets,
+            infoPlist: .default,
+            sources: ["Scratch CardUITests/**/*.swift"],
+            dependencies: [.target(name: appName)],
+            settings: targetSettings([
+                "GENERATE_INFOPLIST_FILE": "YES",
+                "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
+                "SWIFT_EMIT_LOC_STRINGS": "NO",
+                "TEST_TARGET_NAME": .string(appName),
+            ])
+        ),
+    ],
+    schemes: [
+        .scheme(
+            name: appName,
+            buildAction: .buildAction(targets: ["Scratch Card", "Scratch CardTests", "Scratch CardUITests"]),
+            testAction: .targets(["Scratch CardTests", "Scratch CardUITests"]),
+            runAction: .runAction(executable: .executable(.target(appName))),
+            archiveAction: .archiveAction(configuration: .release)
+        ),
+    ],
+    additionalFiles: ["README.md"]
+)

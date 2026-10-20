@@ -1,0 +1,59 @@
+# Scratch Card iOS
+
+The Xcode project is generated from [Project.swift](Project.swift) with Tuist. Commit changes to the manifest and source files; generated `.xcodeproj` and `.xcworkspace` files are ignored.
+
+## Generate and open the project
+
+Install [mise](https://mise.jdx.dev/), then run:
+
+```sh
+mise install
+tuist generate
+```
+
+Open `Scratch Card.xcodeproj` in Xcode. The Tuist version is pinned in `.mise.toml` so everyone generates the project with the same version.
+
+To edit `Project.swift` or `Tuist.swift` in Xcode with code completion, run `tuist edit`. Run `tuist generate` again after changing a manifest.
+
+To run both unit and UI tests, select the shared **Scratch Card** scheme and test in Xcode, or run:
+
+```sh
+xcodebuild test -project 'Scratch Card.xcodeproj' -scheme 'Scratch Card' -destination 'platform=iOS Simulator,name=iPhone 17'
+```
+
+# Original Assignment
+
+Create an iOS application in Swift (minimum iOS version is at your discretion, libraries are allowed, framework choices - if any - are 
+up to you as well). The application should model a scratch card and its usage. The scratch card is initially unscratched, then gets 
+scratched (revealing the code), and subsequently needs to be activated (i.e. 3 states).
+
+## The UI should be as follows:
+
+On the main screen, always display
+1. the current state of the scratch card,
+2. a button that navigates to the scratch screen,
+3. a button that navigates to the activation screen.
+
+On the scratch screen, there should be a button whose click changes the state of the card to scratched. Scratching off the card means to 
+reveal a code (just generate a random UUID). Let's pretend this is a heavy operation and takes 2 seconds. The operation should be 
+cancelled if the user closes the screen (back button) and the operation has not yet successfully completed. On the activation screen, 
+there should be a button whose click activates the scratch card. Activation means sending the revealed code to an API.
+
+## Definition of the service:
+```
+url "https://api.o2.sk/version",
+
+parameter "code",
+
+method "GET",
+
+no authentication,
+
+example response: { "ios": "6.24" }
+```
+
+If the value of "ios" is greater than `6.1`, then the card in the app changes to an activated state, otherwise, an error modal should be 
+displayed. If the user closes the screen during this operation, the operation should not be cancelled. Critical parts of the application 
+should be covered by unit tests.
+
+Publish the source code on github.com or a similar service, and send us the URL to the repository.
