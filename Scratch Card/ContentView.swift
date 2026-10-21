@@ -56,6 +56,7 @@ private struct ContentViewContent: View {
     }
 }
 
+#if !CODE_COVERAGE
 #Preview("Home · Unscratched") {
     homePreview(card: .unscratched)
 }
@@ -74,3 +75,4 @@ private func homePreview(card: CardState) -> some View {
     return NavigationStack { HomeScreen() }
         .environment(\.injector, injector)
 }
+#endif

@@ -138,6 +138,7 @@ private struct ActivationScreenContent: View {
     }
 }
 
+#if !CODE_COVERAGE
 #Preview("Activation · Pending code") {
     NavigationStack { ActivationScreenContent(code: nil, phase: .ready, error: nil, onActivate: {}) }
 }
@@ -184,3 +185,4 @@ private struct ActivationScreenContent: View {
         )
     }
 }
+#endif

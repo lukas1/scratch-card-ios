@@ -17,11 +17,13 @@ SwiftLint is integrated through Swift Package Manager for the **Scratch Card** a
 
 To edit `Project.swift` or `Tuist.swift` in Xcode with code completion, run `tuist edit`. Run `tuist generate` again after changing a manifest.
 
-To run both unit and UI tests, select the shared **Scratch Card** scheme and test in Xcode, or run:
+To run both unit and UI tests with the 96% app coverage gate, run:
 
 ```sh
-xcodebuild test -project 'Scratch Card.xcodeproj' -scheme 'Scratch Card' -destination 'platform=iOS Simulator,name=iPhone 17'
+./scripts/test-with-coverage.sh
 ```
+
+The scheme's Test action uses the `Coverage` build configuration, which compiles out SwiftUI previews marked with `#if !CODE_COVERAGE`. The Swift script checks the app target's coverage and exits unsuccessfully if it is below 96%. Running tests directly in Xcode or with `xcodebuild test` does not enforce the threshold.
 
 # Original Assignment
 

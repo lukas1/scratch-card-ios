@@ -131,6 +131,7 @@ private struct ScratchScreenPresentation: View {
     }
 }
 
+#if !CODE_COVERAGE
 #Preview("Reveal · Ready") {
     NavigationStack { ScratchScreenPresentation(code: nil, isRevealing: false, onReveal: {}) }
 }
@@ -142,3 +143,4 @@ private struct ScratchScreenPresentation: View {
 #Preview("Reveal · Revealed") {
     NavigationStack { ScratchScreenPresentation(code: "SC-4829-7316", isRevealing: false, onReveal: {}) }
 }
+#endif

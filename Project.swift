@@ -16,8 +16,20 @@ private let commonSettings: SettingsDictionary = [
     "TARGETED_DEVICE_FAMILY": "1,2",
 ]
 
+private let buildConfigurations: [Configuration] = [
+    .debug(name: "Debug"),
+    .debug(
+        name: "Coverage",
+        settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) CODE_COVERAGE"]
+    ),
+    .release(name: "Release"),
+]
+
 private func targetSettings(_ overrides: SettingsDictionary) -> Settings {
-    .settings(base: commonSettings.merging(overrides) { _, new in new })
+    .settings(
+        base: commonSettings.merging(overrides) { _, new in new },
+        configurations: buildConfigurations
+    )
 }
 
 let project = Project(
@@ -42,7 +54,8 @@ let project = Project(
             "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
             "LOCALIZATION_PREFERS_STRING_CATALOGS": "YES",
             "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
-        ]
+        ],
+        configurations: buildConfigurations
     ),
     targets: [
         .target(
@@ -112,10 +125,18 @@ let project = Project(
         .scheme(
             name: appName,
             buildAction: .buildAction(targets: ["Scratch Card", "Scratch CardTests", "Scratch CardUITests"]),
-            testAction: .targets(["Scratch CardTests", "Scratch CardUITests"]),
+            testAction: .targets(
+                ["Scratch CardTests", "Scratch CardUITests"],
+                configuration: "Coverage",
+                options: .options(coverage: true)
+            ),
             runAction: .runAction(executable: .executable(.target(appName))),
             archiveAction: .archiveAction(configuration: .release)
         ),
     ],
-    additionalFiles: ["README.md", "AGENTS.md"]
+    additionalFiles: [
+        "README.md",
+        "AGENTS.md",
+        .folderReference(path: "scripts"),
+    ]
 )

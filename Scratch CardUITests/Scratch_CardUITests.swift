@@ -41,6 +41,8 @@ final class Scratch_CardUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Activate your card"].waitForExistence(timeout: 5))
         app.buttons["activateCardButton"].tap()
         XCTAssertTrue(app.staticTexts["Your card is already activated"].waitForExistence(timeout: 4))
+        app.buttons["Done"].tap()
+        XCTAssertTrue(app.staticTexts["cardStatus"].waitForExistence(timeout: 4))
     }
 
     @MainActor
