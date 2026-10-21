@@ -52,6 +52,22 @@ private struct ActivationScreenContent: View {
     }
 
     var body: some View {
+        Group {
+            if let error {
+                page
+                    .alert(.activationErrorTitle, isPresented: $isErrorPresented) {
+                        Button(.commonGotIt, role: .cancel) {}
+                    } message: {
+                        Text(error.message)
+                    }
+            } else {
+                page
+            }
+        }
+        .onChange(of: error) { _, newValue in isErrorPresented = newValue != nil }
+    }
+
+    private var page: some View {
         DestinationPage(
             title: String(localized: .activationTitle),
             description: String(localized: .activationDescription),
@@ -111,12 +127,6 @@ private struct ActivationScreenContent: View {
                 .frame(maxWidth: .infinity)
                 .padding(.top, 12)
         }
-        .alert(.activationErrorTitle, isPresented: $isErrorPresented) {
-            Button(.commonGotIt, role: .cancel) {}
-        } message: {
-            Text(error?.message ?? "")
-        }
-        .onChange(of: error) { _, newValue in isErrorPresented = newValue != nil }
     }
 
     private var actionTitle: String {
