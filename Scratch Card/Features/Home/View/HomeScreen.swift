@@ -1,21 +1,18 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    private let card: CardState
-    private let onScratch: () -> Void
-    private let onActivate: () -> Void
-    private let onReset: () -> Void
+    @RequiredEnvironment(\.injector) private var injector: Injector
 
-    init(
-        card: CardState,
-        onScratch: @escaping () -> Void,
-        onActivate: @escaping () -> Void,
-        onReset: @escaping () -> Void
-    ) {
-        self.card = card
-        self.onScratch = onScratch
-        self.onActivate = onActivate
-        self.onReset = onReset
+    var body: some View {
+        HomeScreenContent(module: injector.homeModule)
+    }
+}
+
+struct HomeScreenContent: View {
+    @State private var viewModel: HomeScreenViewModel
+
+    init(module: HomeModule) {
+        _viewModel = State(wrappedValue: HomeScreenViewModelFactory(module: module).make())
     }
 
     var body: some View {
@@ -31,11 +28,11 @@ struct HomeScreen: View {
                 }
                 .padding(.bottom, 24)
 
-                Text(card.title)
+                Text(viewModel.card.title)
                     .font(.system(size: 43, weight: .bold, design: .serif))
                     .foregroundStyle(Palette.ink)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(card.description)
+                Text(viewModel.card.description)
                     .font(.system(size: 15))
                     .lineSpacing(4)
                     .foregroundStyle(Palette.muted)
@@ -49,7 +46,7 @@ struct HomeScreen: View {
                     Spacer()
                     HStack(spacing: 7) {
                         Circle().fill(Palette.ink).frame(width: 7, height: 7)
-                        Text(card.status)
+                        Text(viewModel.card.status)
                             .font(.system(size: 10, weight: .bold))
                             .tracking(0.7)
                     }
@@ -63,8 +60,8 @@ struct HomeScreen: View {
 
                 ScratchCardArtwork(height: 226) {
                     CodePanel(
-                        code: card.code,
-                        color: card.isActivated ? Palette.lime : Palette.softGreen,
+                        code: viewModel.card.code,
+                        color: viewModel.card.isActivated ? Palette.lime : Palette.softGreen,
                         height: 108
                     )
                 }
@@ -73,16 +70,16 @@ struct HomeScreen: View {
                 SectionEyebrow(text: String(localized: .homeNextStepHeading))
                     .padding(.bottom, 10)
 
-                Button(action: onScratch) {
+                Button(action: viewModel.scratch) {
                     ActionLabel(title: String(localized: .homeActionScratch))
                 }
                 .buttonStyle(CardActionStyle(kind: .primary))
-                .disabled(card != .unscratched)
+                .disabled(viewModel.card != .unscratched)
                 .accessibilityIdentifier("scratchButton")
                 .padding(.bottom, 10)
 
-                if case .scratched = card {
-                    Button(action: onActivate) {
+                if case .scratched = viewModel.card {
+                    Button(action: viewModel.activate) {
                         ActionLabel(title: String(localized: .homeActionActivate))
                     }
                     .buttonStyle(.bordered)
@@ -97,7 +94,7 @@ struct HomeScreen: View {
                     .accessibilityIdentifier("activationButton")
                 }
 
-                Button(.homeActionReset, action: onReset)
+                Button(.homeActionReset, action: viewModel.reset)
                     .font(.system(size: 15))
                     .foregroundStyle(Palette.muted)
                     .frame(maxWidth: .infinity)

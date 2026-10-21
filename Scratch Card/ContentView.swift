@@ -25,18 +25,13 @@ private struct ContentViewContent: View {
 
     var body: some View {
         NavigationStack(path: $navigation.path) {
-            HomeScreen(
-                card: model.card,
-                onScratch: { navigation.push(.scratch) },
-                onActivate: { navigation.showSheet(.activation) },
-                onReset: model.reset
-            )
-            .navigationDestination(for: NavigationDestinations.self) { destination in
-                switch destination {
-                case .scratch:
-                    ScratchScreen(model: model)
+            HomeScreen()
+                .navigationDestination(for: NavigationDestinations.self) { destination in
+                    switch destination {
+                    case .scratch:
+                        ScratchScreen(model: model)
+                    }
                 }
-            }
         }
         .tint(Palette.ink)
         .sheet(item: $navigation.sheet) { sheet in
@@ -62,13 +57,20 @@ private struct ContentViewContent: View {
 }
 
 #Preview("Home · Unscratched") {
-    NavigationStack { HomeScreen(card: .unscratched, onScratch: {}, onActivate: {}, onReset: {}) }
+    homePreview(card: .unscratched)
 }
 
 #Preview("Home · Scratched") {
-    NavigationStack { HomeScreen(card: .scratched("SC-4829-7316"), onScratch: {}, onActivate: {}, onReset: {}) }
+    homePreview(card: .scratched("SC-4829-7316"))
 }
 
 #Preview("Home · Activated") {
-    NavigationStack { HomeScreen(card: .activated("SC-4829-7316"), onScratch: {}, onActivate: {}, onReset: {}) }
+    homePreview(card: .activated("SC-4829-7316"))
+}
+
+private func homePreview(card: CardState) -> some View {
+    let injector = SharedInjector()
+    injector.scratchCardModule.scratchCardRepository.card = card
+    return NavigationStack { HomeScreen() }
+        .environment(\.injector, injector)
 }
