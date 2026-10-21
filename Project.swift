@@ -117,5 +117,5 @@ let project = Project(
             archiveAction: .archiveAction(configuration: .release)
         ),
     ],
-    additionalFiles: ["README.md"]
+    additionalFiles: ["README.md", "AGENTS.md"]
 )
