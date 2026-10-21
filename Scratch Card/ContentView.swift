@@ -14,7 +14,6 @@ struct ContentView: View {
 private struct ContentViewContent: View {
     @Bindable private var navigation: Navigation
     @ObservedObject private var model: ScratchCardRepository
-    @State private var isActivationPresented = false
 
     init(
         navigation: Navigation,
@@ -29,7 +28,7 @@ private struct ContentViewContent: View {
             HomeScreen(
                 card: model.card,
                 onScratch: { navigation.push(.scratch) },
-                onActivate: { isActivationPresented = true },
+                onActivate: { navigation.showSheet(.activation) },
                 onReset: model.reset
             )
             .navigationDestination(for: NavigationDestinations.self) { destination in
@@ -40,16 +39,19 @@ private struct ContentViewContent: View {
             }
         }
         .tint(Palette.ink)
-        .sheet(isPresented: $isActivationPresented) {
-            NavigationStack {
-                ActivationScreen(model: model)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button(.commonDone) { isActivationPresented = false }
+        .sheet(item: $navigation.sheet) { sheet in
+            switch sheet {
+            case .activation:
+                NavigationStack {
+                    ActivationScreen(model: model)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(.commonDone) { navigation.dismissSheet() }
+                            }
                         }
-                    }
+                }
+                .tint(Palette.ink)
             }
-            .tint(Palette.ink)
         }
         .onChange(of: navigation.path) { oldPath, newPath in
             if oldPath.contains(.scratch), !newPath.contains(.scratch) {
