@@ -13,7 +13,11 @@ enum Palette {
 }
 
 struct SectionEyebrow: View {
-    let text: String
+    private let text: String
+
+    init(text: String) {
+        self.text = text
+    }
 
     var body: some View {
         Text(text)
@@ -24,8 +28,13 @@ struct SectionEyebrow: View {
 }
 
 struct ScratchCardArtwork<Content: View>: View {
-    let height: CGFloat
-    @ViewBuilder let content: Content
+    private let height: CGFloat
+    private let content: Content
+
+    init(height: CGFloat, @ViewBuilder content: () -> Content) {
+        self.height = height
+        self.content = content()
+    }
 
     var body: some View {
         ZStack {
@@ -79,10 +88,17 @@ struct ScratchCardArtwork<Content: View>: View {
 }
 
 struct CodePanel: View {
-    let code: String?
-    let color: Color
-    let height: CGFloat
-    var status: String?
+    private let code: String?
+    private let color: Color
+    private let height: CGFloat
+    private let status: String?
+
+    init(code: String?, color: Color, height: CGFloat, status: String? = nil) {
+        self.code = code
+        self.color = color
+        self.height = height
+        self.status = status
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -112,10 +128,17 @@ struct CodePanel: View {
 }
 
 struct DestinationPage<Content: View>: View {
-    let title: String
-    let description: String
-    let step: String
-    @ViewBuilder let content: Content
+    private let title: String
+    private let description: String
+    private let step: String
+    private let content: Content
+
+    init(title: String, description: String, step: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.description = description
+        self.step = step
+        self.content = content()
+    }
 
     var body: some View {
         ScrollView {

@@ -1,12 +1,12 @@
 import SwiftUI
 
-enum ActivationPhase {
+private enum ActivationPhase {
     case ready
     case activating
     case activated
 }
 
-enum ActivationError: String, Identifiable {
+private enum ActivationError: String, Identifiable {
     case failed
     case unexpected
 
@@ -20,7 +20,11 @@ enum ActivationError: String, Identifiable {
 }
 
 struct ActivationScreen: View {
-    @ObservedObject var model: ScratchCardRepository
+    @ObservedObject private var model: ScratchCardRepository
+
+    init(model: ScratchCardRepository) {
+        self.model = model
+    }
 
     var body: some View {
         ActivationScreenContent(
@@ -32,11 +36,11 @@ struct ActivationScreen: View {
     }
 }
 
-struct ActivationScreenContent: View {
-    let code: String?
-    let phase: ActivationPhase
-    let error: ActivationError?
-    let onActivate: () -> Void
+private struct ActivationScreenContent: View {
+    private let code: String?
+    private let phase: ActivationPhase
+    private let error: ActivationError?
+    private let onActivate: () -> Void
     @State private var isErrorPresented: Bool
 
     init(code: String?, phase: ActivationPhase, error: ActivationError?, onActivate: @escaping () -> Void) {

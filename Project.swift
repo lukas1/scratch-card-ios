@@ -1,9 +1,9 @@
 import ProjectDescription
 
-let appName = "Scratch Card"
-let deploymentTargets: DeploymentTargets = .iOS("26.5")
+private let appName = "Scratch Card"
+private let deploymentTargets: DeploymentTargets = .iOS("26.5")
 
-let commonSettings: SettingsDictionary = [
+private let commonSettings: SettingsDictionary = [
     "CODE_SIGN_STYLE": "Automatic",
     "CURRENT_PROJECT_VERSION": "1",
     "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
@@ -16,7 +16,7 @@ let commonSettings: SettingsDictionary = [
     "TARGETED_DEVICE_FAMILY": "1,2",
 ]
 
-func targetSettings(_ overrides: SettingsDictionary) -> Settings {
+private func targetSettings(_ overrides: SettingsDictionary) -> Settings {
     .settings(base: commonSettings.merging(overrides) { _, new in new })
 }
 

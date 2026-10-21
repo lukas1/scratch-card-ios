@@ -1,7 +1,11 @@
 import SwiftUI
 
 struct ScratchScreen: View {
-    @ObservedObject var model: ScratchCardRepository
+    @ObservedObject private var model: ScratchCardRepository
+
+    init(model: ScratchCardRepository) {
+        self.model = model
+    }
 
     var body: some View {
         ScratchScreenContent(
@@ -12,10 +16,16 @@ struct ScratchScreen: View {
     }
 }
 
-struct ScratchScreenContent: View {
-    let code: String?
-    let isRevealing: Bool
-    let onReveal: () -> Void
+private struct ScratchScreenContent: View {
+    private let code: String?
+    private let isRevealing: Bool
+    private let onReveal: () -> Void
+
+    init(code: String?, isRevealing: Bool, onReveal: @escaping () -> Void) {
+        self.code = code
+        self.isRevealing = isRevealing
+        self.onReveal = onReveal
+    }
 
     var body: some View {
         DestinationPage(

@@ -9,9 +9,13 @@ struct ContentView: View {
 }
 
 private struct ContentViewContent: View {
-    @ObservedObject var model: ScratchCardRepository
+    @ObservedObject private var model: ScratchCardRepository
     @State private var path: [NavigationDestinations] = []
     @State private var isActivationPresented = false
+
+    init(model: ScratchCardRepository) {
+        self.model = model
+    }
 
     var body: some View {
         NavigationStack(path: $path) {

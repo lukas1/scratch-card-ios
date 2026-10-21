@@ -1,10 +1,22 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    let card: CardState
-    let onScratch: () -> Void
-    let onActivate: () -> Void
-    let onReset: () -> Void
+    private let card: CardState
+    private let onScratch: () -> Void
+    private let onActivate: () -> Void
+    private let onReset: () -> Void
+
+    init(
+        card: CardState,
+        onScratch: @escaping () -> Void,
+        onActivate: @escaping () -> Void,
+        onReset: @escaping () -> Void
+    ) {
+        self.card = card
+        self.onScratch = onScratch
+        self.onActivate = onActivate
+        self.onReset = onReset
+    }
 
     var body: some View {
         ScrollView {
@@ -142,7 +154,11 @@ private struct BrandMark: View {
 }
 
 struct ActionLabel: View {
-    let title: String
+    private let title: String
+
+    init(title: String) {
+        self.title = title
+    }
 
     var body: some View {
         HStack {
@@ -158,7 +174,11 @@ struct ActionLabel: View {
 
 struct CardActionStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
-    let kind: Kind
+    private let kind: Kind
+
+    init(kind: Kind) {
+        self.kind = kind
+    }
 
     enum Kind {
         case primary
