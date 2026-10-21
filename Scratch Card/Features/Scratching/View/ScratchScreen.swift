@@ -1,22 +1,30 @@
 import SwiftUI
 
 struct ScratchScreen: View {
-    @ObservedObject private var model: ScratchCardRepository
+    @RequiredEnvironment(\.injector) private var injector: Injector
 
-    init(model: ScratchCardRepository) {
-        self.model = model
+    var body: some View {
+        ScratchScreenContent(module: injector.scratchCardModule)
+    }
+}
+
+struct ScratchScreenContent: View {
+    @State private var viewModel: ScratchScreenViewModel
+
+    init(module: ScratchCardModule) {
+        _viewModel = State(wrappedValue: ScratchScreenViewModelFactory(module: module).make())
     }
 
     var body: some View {
-        ScratchScreenContent(
-            code: model.card.code,
-            isRevealing: model.isRevealing,
-            onReveal: model.startReveal
+        ScratchScreenPresentation(
+            code: viewModel.card.code,
+            isRevealing: viewModel.isRevealing,
+            onReveal: viewModel.reveal
         )
     }
 }
 
-private struct ScratchScreenContent: View {
+private struct ScratchScreenPresentation: View {
     private let code: String?
     private let isRevealing: Bool
     private let onReveal: () -> Void
@@ -124,13 +132,13 @@ private struct ScratchScreenContent: View {
 }
 
 #Preview("Reveal · Ready") {
-    NavigationStack { ScratchScreenContent(code: nil, isRevealing: false, onReveal: {}) }
+    NavigationStack { ScratchScreenPresentation(code: nil, isRevealing: false, onReveal: {}) }
 }
 
 #Preview("Reveal · Loading") {
-    NavigationStack { ScratchScreenContent(code: nil, isRevealing: true, onReveal: {}) }
+    NavigationStack { ScratchScreenPresentation(code: nil, isRevealing: true, onReveal: {}) }
 }
 
 #Preview("Reveal · Revealed") {
-    NavigationStack { ScratchScreenContent(code: "SC-4829-7316", isRevealing: false, onReveal: {}) }
+    NavigationStack { ScratchScreenPresentation(code: "SC-4829-7316", isRevealing: false, onReveal: {}) }
 }

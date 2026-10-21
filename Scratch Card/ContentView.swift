@@ -29,7 +29,7 @@ private struct ContentViewContent: View {
                 .navigationDestination(for: NavigationDestinations.self) { destination in
                     switch destination {
                     case .scratch:
-                        ScratchScreen(model: model)
+                        ScratchScreen()
                     }
                 }
         }
