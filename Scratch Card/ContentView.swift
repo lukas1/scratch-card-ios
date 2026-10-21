@@ -4,24 +4,31 @@ struct ContentView: View {
     @RequiredEnvironment(\.injector) private var injector: Injector
 
     var body: some View {
-        ContentViewContent(model: injector.scratchCardModule.scratchCardRepository)
+        ContentViewContent(
+            navigation: injector.globalModule.navigation,
+            model: injector.scratchCardModule.scratchCardRepository
+        )
     }
 }
 
 private struct ContentViewContent: View {
+    @Bindable private var navigation: Navigation
     @ObservedObject private var model: ScratchCardRepository
-    @State private var path: [NavigationDestinations] = []
     @State private var isActivationPresented = false
 
-    init(model: ScratchCardRepository) {
+    init(
+        navigation: Navigation,
+        model: ScratchCardRepository
+    ) {
+        self.navigation = navigation
         self.model = model
     }
 
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $navigation.path) {
             HomeScreen(
                 card: model.card,
-                onScratch: { path.append(.scratch) },
+                onScratch: { navigation.push(.scratch) },
                 onActivate: { isActivationPresented = true },
                 onReset: model.reset
             )
@@ -44,7 +51,7 @@ private struct ContentViewContent: View {
             }
             .tint(Palette.ink)
         }
-        .onChange(of: path) { oldPath, newPath in
+        .onChange(of: navigation.path) { oldPath, newPath in
             if oldPath.contains(.scratch), !newPath.contains(.scratch) {
                 model.cancelReveal()
             }
