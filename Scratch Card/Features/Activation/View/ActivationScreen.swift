@@ -61,7 +61,9 @@ struct ActivationScreenContent: View {
                     code: code,
                     color: Palette.lime,
                     height: 120,
-                    status: code == nil ? String(localized: .activationCodeHiddenStatus) : String(localized: .activationCodeReadyStatus)
+                    status: code == nil
+                        ? String(localized: .activationCodeHiddenStatus)
+                        : String(localized: .activationCodeReadyStatus)
                 )
             }
             HStack(spacing: 14) {
@@ -159,5 +161,12 @@ struct ActivationScreenContent: View {
 }
 
 #Preview("Activation · Loading error") {
-    NavigationStack { ActivationScreenContent(code: "SC-4829-7316", phase: .activating, error: .unexpected, onActivate: {}) }
+    NavigationStack {
+        ActivationScreenContent(
+            code: "SC-4829-7316",
+            phase: .activating,
+            error: .unexpected,
+            onActivate: {}
+        )
+    }
 }

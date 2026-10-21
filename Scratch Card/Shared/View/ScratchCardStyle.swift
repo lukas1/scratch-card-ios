@@ -82,7 +82,7 @@ struct CodePanel: View {
     let code: String?
     let color: Color
     let height: CGFloat
-    var status: String? = nil
+    var status: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {

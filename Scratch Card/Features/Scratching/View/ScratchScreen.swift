@@ -39,13 +39,27 @@ struct ScratchScreenContent: View {
                         if isRevealing {
                             ProgressView().tint(Palette.ink)
                         }
-                            Text(code ?? (isRevealing ? String(localized: .scratchCodeRevealing) : String(localized: .scratchCodeHidden)))
-                            .font(.system(size: code == nil ? 25 : 14, weight: .bold, design: code == nil ? .serif : .monospaced))
+                        Text(
+                            code ?? (isRevealing
+                                ? String(localized: .scratchCodeRevealing)
+                                : String(localized: .scratchCodeHidden))
+                        )
+                            .font(
+                                .system(
+                                    size: code == nil ? 25 : 14,
+                                    weight: .bold,
+                                    design: code == nil ? .serif : .monospaced
+                                )
+                            )
                             .multilineTextAlignment(.center)
                             .lineLimit(2)
                             .minimumScaleFactor(0.75)
                             .accessibilityIdentifier("scratchCode")
-                        Text(code == nil ? String(localized: .scratchCodeHiddenLabel) : String(localized: .scratchCodeRevealedLabel))
+                        Text(
+                            code == nil
+                                ? String(localized: .scratchCodeHiddenLabel)
+                                : String(localized: .scratchCodeRevealedLabel)
+                        )
                             .font(.system(size: 9, weight: .bold, design: .monospaced))
                             .tracking(1.6)
                             .foregroundStyle(Palette.muted)
@@ -74,7 +88,7 @@ struct ScratchScreenContent: View {
             }
             .padding(.top, 22)
             Button(action: onReveal) {
-                    ActionLabel(title: code != nil ? String(localized: .scratchActionRevealed) : (isRevealing ? String(localized: .scratchActionRevealing) : String(localized: .scratchActionReveal)))
+                ActionLabel(title: actionTitle)
             }
             .buttonStyle(CardActionStyle(kind: .primary))
             .disabled(code != nil || isRevealing)
@@ -85,6 +99,16 @@ struct ScratchScreenContent: View {
                 .foregroundStyle(Palette.muted)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 12)
+        }
+    }
+
+    private var actionTitle: String {
+        if code != nil {
+            String(localized: .scratchActionRevealed)
+        } else if isRevealing {
+            String(localized: .scratchActionRevealing)
+        } else {
+            String(localized: .scratchActionReveal)
         }
     }
 }
