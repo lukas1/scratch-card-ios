@@ -4,6 +4,8 @@ import ViewInspector
 import Clocks
 
 struct ScratchScreenTests {
+    private let expectedCode = "SC-4829-7316"
+
     @MainActor
     @Test func `GIVEN a hidden code THEN reveal is enabled`() throws {
         let sut = makeSUT()
@@ -30,9 +32,7 @@ struct ScratchScreenTests {
         await clock.advance(by: .milliseconds(1))
 
         let code = try sut.inspect().find(viewWithAccessibilityIdentifier: "scratchCode").text().string()
-        #expect(!code.isEmpty)
-        #expect(code != String(localized: .scratchCodeHidden))
-        #expect(code != String(localized: .scratchCodeRevealing))
+        #expect(code == expectedCode)
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().isDisabled())
     }
 
@@ -48,7 +48,7 @@ struct ScratchScreenTests {
         card: CardState = .unscratched,
         clock: any Clock<Duration> = ContinuousClock()
     ) -> ScratchScreenContent {
-        let module = ScratchCardModule(clock: clock)
+        let module = ScratchCardModule(clock: clock, codeGenerator: { expectedCode })
         module.scratchCardRepository.card = card
         return ScratchScreenContent(module: module)
     }

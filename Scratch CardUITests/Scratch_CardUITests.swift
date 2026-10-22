@@ -34,6 +34,7 @@ final class Scratch_CardUITests: XCTestCase {
 
         app.buttons["revealButton"].tap()
         XCTAssertTrue(app.staticTexts["YOUR UNIQUE CODE"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.staticTexts["scratchCode"].label, "SC-4829-7316")
 
         app.navigationBars.buttons.firstMatch.tap()
         XCTAssertTrue(app.staticTexts["SCRATCHED"].exists)

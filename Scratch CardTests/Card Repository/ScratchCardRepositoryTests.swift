@@ -2,24 +2,33 @@ import Clocks
 import Testing
 
 struct ScratchCardRepositoryTests {
+    private let expectedCode = "SC-4829-7316"
+
     @MainActor
     @Test func `GIVEN a reveal in progress WHEN reveal starts again THEN only the original reveal runs`() async {
         let clock = TestClock()
-        let repository = ScratchCardRepository(clock: clock)
-        let task = Task { await repository.scratchCard() }
+        var generatedCodeCount = 0
+        let repository = ScratchCardRepository(clock: clock) {
+            generatedCodeCount += 1
+            return "SC-4829-\(7315 + generatedCodeCount)"
+        }
+        let originalTask = Task { await repository.scratchCard() }
         await Task.yield()
 
-        await repository.scratchCard()
+        let duplicateTask = Task { await repository.scratchCard() }
+        await Task.yield()
         await clock.advance(by: .seconds(2))
-        await task.value
+        await originalTask.value
+        await duplicateTask.value
 
-        #expect(repository.card.code != nil && !repository.card.isActivated)
+        #expect(generatedCodeCount == 1)
+        #expect(repository.card == .scratched("SC-4829-7316"))
     }
 
     @MainActor
     @Test func `GIVEN a reveal in progress WHEN reset happens THEN the card stays unscratched`() async {
         let clock = TestClock()
-        let repository = ScratchCardRepository(clock: clock)
+        let repository = ScratchCardRepository(clock: clock, codeGenerator: { expectedCode })
         let task = Task { await repository.scratchCard() }
         await Task.yield()
 
@@ -31,9 +40,13 @@ struct ScratchCardRepositoryTests {
     }
 
     @MainActor
-    @Test func `GIVEN a reveal in progress WHEN its task is cancelled THEN the card stays unscratched`() async {
+    @Test func `GIVEN a reveal in progress WHEN its task is cancelled THEN a retry reveals the card once`() async {
         let clock = TestClock()
-        let repository = ScratchCardRepository(clock: clock)
+        var generatedCodeCount = 0
+        let repository = ScratchCardRepository(clock: clock) {
+            generatedCodeCount += 1
+            return "SC-4829-\(7315 + generatedCodeCount)"
+        }
         let task = Task { await repository.scratchCard() }
         await Task.yield()
 
@@ -47,7 +60,8 @@ struct ScratchCardRepositoryTests {
         await clock.advance(by: .seconds(2))
         await retryTask.value
 
-        #expect(repository.card.code != nil && !repository.card.isActivated)
+        #expect(generatedCodeCount == 1)
+        #expect(repository.card == .scratched("SC-4829-7316"))
     }
 
     @MainActor

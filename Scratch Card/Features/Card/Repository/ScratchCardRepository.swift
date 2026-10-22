@@ -5,12 +5,24 @@ import Foundation
 // Local presentation state lets the screens be explored without an API or data layer.
 final class ScratchCardRepository: ObservableObject {
     private let clock: any Clock<Duration>
+    private let cardScratcher: CardScratcher
     @Published var card: CardState = .unscratched
     @Published var isActivating = false
     private var ongoingScratchingCardRequestId: UUID?
 
-    init(clock: any Clock<Duration> = ContinuousClock()) {
+    init(clock: any Clock<Duration>, cardScratcher: CardScratcher) {
         self.clock = clock
+        self.cardScratcher = cardScratcher
+    }
+
+    convenience init(
+        clock: any Clock<Duration> = ContinuousClock(),
+        codeGenerator: @escaping ScratchCardCodeGenerator = { UUID().uuidString }
+    ) {
+        self.init(
+            clock: clock,
+            cardScratcher: CardScratcher(clock: clock, codeGenerator: codeGenerator)
+        )
     }
 
     func reset() {
@@ -30,10 +42,9 @@ final class ScratchCardRepository: ObservableObject {
         }
 
         do {
-            try await clock.sleep(for: .seconds(2))
-            try Task.checkCancellation()
+            let code = try await cardScratcher.scratch()
             guard ongoingScratchingCardRequestId == scratchingRequestId else { return }
-            card = .scratched(UUID().uuidString)
+            card = .scratched(code)
         } catch {
             // Navigating back cancels the local reveal demonstration.
         }
