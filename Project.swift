@@ -50,6 +50,10 @@ let project = Project(
             url: "https://github.com/SimplyDanny/SwiftLintPlugins",
             requirement: .upToNextMajor(from: "0.65.1")
         ),
+        .remote(
+            url: "https://github.com/pointfreeco/swift-clocks",
+            requirement: .upToNextMajor(from: "0.4.0")
+        ),
     ],
     settings: .settings(
         base: [
@@ -70,6 +74,7 @@ let project = Project(
             infoPlist: .default,
             buildableFolders: ["Scratch Card"],
             dependencies: [
+                .package(product: "Clocks", type: .runtime),
                 .package(product: "SwiftLintBuildToolPlugin", type: .plugin),
             ],
             settings: targetSettings([
@@ -97,6 +102,7 @@ let project = Project(
             buildableFolders: ["Scratch CardTests"],
             dependencies: [
                 .target(name: appName),
+                .package(product: "Clocks", type: .runtime),
                 .package(product: "ViewInspector", type: .runtime),
             ],
             settings: targetSettings([

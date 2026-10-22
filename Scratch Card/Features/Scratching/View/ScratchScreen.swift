@@ -55,7 +55,9 @@ private struct ScratchScreenPresentation: View {
                         Image(systemName: "asterisk")
                             .font(.system(size: 25, weight: .medium))
                         if isRevealing {
-                            ProgressView().tint(Palette.ink)
+                            ProgressView()
+                                .tint(Palette.ink)
+                                .accessibilityIdentifier("revealProgress")
                         }
                         Text(
                             code ?? (isRevealing

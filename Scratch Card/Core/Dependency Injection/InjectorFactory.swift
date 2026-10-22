@@ -1,5 +1,11 @@
+import Clocks
+
 enum InjectorFactory {
     static func real() -> any Injector {
-        SharedInjector()
+#if UI_TESTING
+        return SharedInjector(clock: ImmediateClock())
+#else
+        return SharedInjector()
+#endif
     }
 }
