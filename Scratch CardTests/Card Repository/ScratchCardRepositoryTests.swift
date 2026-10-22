@@ -1,6 +1,5 @@
 import Clocks
 import Testing
-@testable import Scratch_Card
 
 struct ScratchCardRepositoryTests {
     @MainActor

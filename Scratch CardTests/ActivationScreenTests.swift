@@ -1,6 +1,5 @@
 import Testing
 import ViewInspector
-@testable import Scratch_Card
 
 struct ActivationScreenTests {
     @MainActor

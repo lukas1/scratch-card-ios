@@ -2,7 +2,6 @@ import Testing
 import SwiftUI
 import ViewInspector
 import Clocks
-@testable import Scratch_Card
 
 struct ScratchScreenTests {
     @MainActor

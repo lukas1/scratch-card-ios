@@ -1,5 +1,4 @@
 import Testing
-@testable import Scratch_Card
 
 struct NavigationTests {
     @Test func `GIVEN an activation sheet WHEN dismissed THEN no sheet is presented`() {

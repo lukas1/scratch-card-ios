@@ -23,7 +23,7 @@ To run both unit and UI tests with the 96% app coverage gate, run:
 ./scripts/test-with-coverage.sh
 ```
 
-The scheme's Test action uses the `Coverage` build configuration, which compiles out SwiftUI previews marked with `#if !CODE_COVERAGE`. The Swift script checks the app target's coverage and exits unsuccessfully if it is below 96%. Running tests directly in Xcode or with `xcodebuild test` does not enforce the threshold.
+The scheme's Test action uses the `Coverage` build configuration, which compiles out SwiftUI previews marked with `#if !CODE_COVERAGE`. The Swift script counts distinct executable app source lines in the coverage archive and exits unsuccessfully if coverage is below 96%. Running tests directly in Xcode or with `xcodebuild test` does not enforce the threshold.
 
 # Original Assignment
 

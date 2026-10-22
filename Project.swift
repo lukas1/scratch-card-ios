@@ -99,17 +99,17 @@ let project = Project(
             bundleId: "com.lukas.vyletel.Scratch-CardTests",
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
-            buildableFolders: ["Scratch CardTests"],
+            buildableFolders: [
+                .folder("Scratch Card", exceptions: [.exception(excluded: ["Scratch_CardApp.swift"])]),
+                "Scratch CardTests",
+            ],
             dependencies: [
-                .target(name: appName),
                 .package(product: "Clocks", type: .runtime),
                 .package(product: "ViewInspector", type: .runtime),
             ],
             settings: targetSettings([
-                "BUNDLE_LOADER": "$(TEST_HOST)",
                 "GENERATE_INFOPLIST_FILE": "YES",
                 "SWIFT_EMIT_LOC_STRINGS": "NO",
-                "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/Scratch_Card.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Scratch_Card",
             ])
         ),
         .target(

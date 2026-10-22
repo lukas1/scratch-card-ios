@@ -1,7 +1,6 @@
 import Testing
 import SwiftUI
 import ViewInspector
-@testable import Scratch_Card
 
 struct HomeScreenTests {
     @MainActor
