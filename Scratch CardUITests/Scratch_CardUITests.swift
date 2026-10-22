@@ -46,6 +46,25 @@ final class Scratch_CardUITests: XCTestCase {
     }
 
     @MainActor
+    func testGIVENRevealInProgressWHENBackIsTappedTHENScratchingIsCancelled() throws {
+        XCUIDevice.shared.orientation = .portrait
+        let app = XCUIApplication()
+        app.launchArguments.append("-ui-test-pending-reveal")
+        app.launch()
+
+        app.buttons["scratchButton"].tap()
+        app.buttons["revealButton"].tap()
+        XCTAssertEqual(app.staticTexts["scratchCode"].label, "Revealing…")
+
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["UNSCRATCHED"].waitForExistence(timeout: 3))
+
+        app.buttons["scratchButton"].tap()
+        XCTAssertEqual(app.staticTexts["scratchCode"].label, "A little mystery")
+        XCTAssertTrue(app.buttons["revealButton"].isEnabled)
+    }
+
+    @MainActor
     func testLaunchPerformance() throws {
         // This measures how long it takes to launch your application.
         measure(metrics: [XCTApplicationLaunchMetric()]) {
