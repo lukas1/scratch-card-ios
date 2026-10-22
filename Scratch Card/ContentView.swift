@@ -48,11 +48,6 @@ private struct ContentViewContent: View {
                 .tint(Palette.ink)
             }
         }
-        .onChange(of: navigation.path) { oldPath, newPath in
-            if oldPath.contains(.scratch), !newPath.contains(.scratch) {
-                model.cancelReveal()
-            }
-        }
     }
 }
 

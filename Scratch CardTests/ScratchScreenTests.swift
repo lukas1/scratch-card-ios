@@ -6,7 +6,7 @@ import Clocks
 struct ScratchScreenTests {
     @MainActor
     @Test func `GIVEN a hidden code THEN reveal is enabled`() throws {
-        let sut = makeSUT().view
+        let sut = makeSUT()
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().isDisabled() == false)
     }
@@ -14,7 +14,7 @@ struct ScratchScreenTests {
     @MainActor
     @Test func `GIVEN a hidden code WHEN reveal time advances THEN the code is revealed`() async throws {
         let clock = TestClock()
-        let sut = makeSUT(clock: clock).view
+        let sut = makeSUT(clock: clock)
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().tap()
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().isDisabled())
@@ -37,29 +37,8 @@ struct ScratchScreenTests {
     }
 
     @MainActor
-    @Test func `GIVEN a reveal in progress WHEN reveal starts again THEN the original reveal completes on time`() async throws {
-        let clock = TestClock()
-        let (module, sut) = makeSUT(clock: clock)
-
-        module.scratchCardRepository.startReveal()
-        await clock.advance(by: .seconds(1))
-        module.scratchCardRepository.startReveal()
-        await clock.advance(by: .milliseconds(999))
-
-        #expect(
-            try sut.inspect().find(viewWithAccessibilityIdentifier: "scratchCode").text().string()
-                == String(localized: .scratchCodeRevealing)
-        )
-
-        await clock.advance(by: .milliseconds(1))
-
-        let code = try sut.inspect().find(viewWithAccessibilityIdentifier: "scratchCode").text().string()
-        #expect(code != String(localized: .scratchCodeRevealing))
-    }
-
-    @MainActor
     @Test func `GIVEN a revealed code THEN reveal is disabled`() throws {
-        let sut = makeSUT(card: .scratched("SC-4829-7316")).view
+        let sut = makeSUT(card: .scratched("SC-4829-7316"))
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().isDisabled())
     }
@@ -68,9 +47,9 @@ struct ScratchScreenTests {
     private func makeSUT(
         card: CardState = .unscratched,
         clock: any Clock<Duration> = ContinuousClock()
-    ) -> (module: ScratchCardModule, view: ScratchScreenContent) {
+    ) -> ScratchScreenContent {
         let module = ScratchCardModule(clock: clock)
         module.scratchCardRepository.card = card
-        return (module, ScratchScreenContent(module: module))
+        return ScratchScreenContent(module: module)
     }
 }

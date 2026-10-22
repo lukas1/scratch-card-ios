@@ -6,46 +6,37 @@ import Foundation
 final class ScratchCardRepository: ObservableObject {
     private let clock: any Clock<Duration>
     @Published var card: CardState = .unscratched
-    @Published var isRevealing = false
     @Published var isActivating = false
-    private var revealTask: Task<Void, Never>?
-    private var revealGeneration = UUID()
+    private var ongoingScratchingCardRequestId: UUID?
 
     init(clock: any Clock<Duration> = ContinuousClock()) {
         self.clock = clock
     }
 
     func reset() {
-        cancelReveal()
+        ongoingScratchingCardRequestId = nil
         card = .unscratched
     }
 
-    func startReveal() {
-        guard card == .unscratched, !isRevealing else { return }
-        let generation = UUID()
-        revealGeneration = generation
-        isRevealing = true
-        revealTask = Task {
-            do {
-                try await clock.sleep(for: .seconds(2))
-                try Task.checkCancellation()
-                guard revealGeneration == generation else { return }
-                card = .scratched(UUID().uuidString)
-            } catch {
-                // Navigating back cancels the local reveal demonstration.
-            }
-            if revealGeneration == generation {
-                isRevealing = false
-                revealTask = nil
+    func scratchCard() async {
+        guard card == .unscratched, ongoingScratchingCardRequestId == nil else { return }
+        let scratchingRequestId = UUID()
+        ongoingScratchingCardRequestId = scratchingRequestId
+
+        defer {
+            if scratchingRequestId == ongoingScratchingCardRequestId {
+                ongoingScratchingCardRequestId = nil
             }
         }
-    }
 
-    func cancelReveal() {
-        revealGeneration = UUID()
-        revealTask?.cancel()
-        revealTask = nil
-        isRevealing = false
+        do {
+            try await clock.sleep(for: .seconds(2))
+            try Task.checkCancellation()
+            guard ongoingScratchingCardRequestId == scratchingRequestId else { return }
+            card = .scratched(UUID().uuidString)
+        } catch {
+            // Navigating back cancels the local reveal demonstration.
+        }
     }
 
     func activateForDemo() {

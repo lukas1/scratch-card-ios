@@ -4,7 +4,10 @@ import Observation
 @Observable
 final class ScratchScreenViewModel {
     private(set) var card: CardState
-    private(set) var isRevealing: Bool
+    var isRevealing: Bool {
+        revealingTask != nil
+    }
+    private var revealingTask: Task<(), Never>?
 
     private let repository: ScratchCardRepository
     private var cancellables: Set<AnyCancellable> = []
@@ -12,18 +15,21 @@ final class ScratchScreenViewModel {
     init(module: ScratchCardModule) {
         repository = module.scratchCardRepository
         card = repository.card
-        isRevealing = repository.isRevealing
 
         repository.$card
             .sink { [weak self] card in self?.card = card }
             .store(in: &cancellables)
-
-        repository.$isRevealing
-            .sink { [weak self] isRevealing in self?.isRevealing = isRevealing }
-            .store(in: &cancellables)
     }
 
     func reveal() {
-        repository.startReveal()
+        guard revealingTask == nil else { return }
+        revealingTask = Task { [weak self] in
+            await self?.repository.scratchCard()
+            self?.revealingTask = nil
+        }
+    }
+
+    deinit {
+        revealingTask?.cancel()
     }
 }
