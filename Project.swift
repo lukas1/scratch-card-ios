@@ -20,7 +20,9 @@ private let buildConfigurations: [Configuration] = [
     .debug(name: "Debug"),
     .debug(
         name: "Coverage",
-        settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) CODE_COVERAGE"]
+        settings: [
+            "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) CODE_COVERAGE UI_TESTING",
+        ]
     ),
     .release(name: "Release"),
 ]
