@@ -1,22 +1,22 @@
 import SwiftUI
 
-struct ActivationScreen: View {
+struct ActivationSheet: View {
     let injector: Injector
 
     var body: some View {
-        ActivationScreenContent(module: injector.scratchCardModule)
+        ActivationSheetContent(module: injector.scratchCardModule)
     }
 }
 
-struct ActivationScreenContent: View {
-    @State private var viewModel: ActivationScreenViewModel
+struct ActivationSheetContent: View {
+    @State private var viewModel: ActivationSheetViewModel
 
     init(module: ScratchCardModule) {
-        _viewModel = State(wrappedValue: ActivationScreenViewModelFactory(module: module).make())
+        _viewModel = State(wrappedValue: ActivationSheetViewModelFactory(module: module).make())
     }
 
     var body: some View {
-        ActivationScreenPresentation(
+        ActivationSheetPresentation(
             code: viewModel.code,
             phase: viewModel.phase,
             onActivate: viewModel.activate
@@ -24,7 +24,7 @@ struct ActivationScreenContent: View {
     }
 }
 
-private struct ActivationScreenPresentation: View {
+private struct ActivationSheetPresentation: View {
     private let code: String?
     private let phase: ActivationPhase
     private let onActivate: () -> Void
@@ -109,23 +109,23 @@ private struct ActivationScreenPresentation: View {
 
 #if !CODE_COVERAGE
 #Preview("Activation · Pending code") {
-    NavigationStack { ActivationScreenPresentation(code: nil, phase: .ready, onActivate: {}) }
+    NavigationStack { ActivationSheetPresentation(code: nil, phase: .ready, onActivate: {}) }
 }
 
 #Preview("Activation · Pending, loading") {
-    NavigationStack { ActivationScreenPresentation(code: nil, phase: .activating, onActivate: {}) }
+    NavigationStack { ActivationSheetPresentation(code: nil, phase: .activating, onActivate: {}) }
 }
 
 #Preview("Activation · Ready") {
-    NavigationStack { ActivationScreenPresentation(code: "SC-4829-7316", phase: .ready, onActivate: {}) }
+    NavigationStack { ActivationSheetPresentation(code: "SC-4829-7316", phase: .ready, onActivate: {}) }
 }
 
 #Preview("Activation · Loading") {
-    NavigationStack { ActivationScreenPresentation(code: "SC-4829-7316", phase: .activating, onActivate: {}) }
+    NavigationStack { ActivationSheetPresentation(code: "SC-4829-7316", phase: .activating, onActivate: {}) }
 }
 
 #Preview("Activation · Activated") {
-    NavigationStack { ActivationScreenPresentation(code: "SC-4829-7316", phase: .activated, onActivate: {}) }
+    NavigationStack { ActivationSheetPresentation(code: "SC-4829-7316", phase: .activated, onActivate: {}) }
 }
 
 #Preview("Activation · Unsupported version error") {
@@ -164,7 +164,7 @@ private struct ActivationErrorPreview: View {
 
     var body: some View {
         NavigationStack {
-            ActivationScreenContent(module: module)
+            ActivationSheetContent(module: module)
         }
         .task {
             await repository.scratchCard()

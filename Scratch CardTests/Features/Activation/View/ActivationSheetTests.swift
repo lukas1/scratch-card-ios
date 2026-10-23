@@ -3,11 +3,11 @@ import Testing
 import ViewInspector
 import Clocks
 
-struct ActivationScreenTests {
+struct ActivationSheetTests {
     @MainActor
     @Test func `GIVEN no revealed code THEN activation is disabled`() throws {
         let module = ScratchCardModule(testSession: TestURLSession())
-        let sut = ActivationScreenContent(module: module)
+        let sut = ActivationSheetContent(module: module)
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().isDisabled())
     }
@@ -22,7 +22,7 @@ struct ActivationScreenTests {
             testSession: testSession
         )
         let model = module.scratchCardRepository
-        let sut = ActivationScreenContent(module: module)
+        let sut = ActivationSheetContent(module: module)
         let scratching = Task { await model.scratchCard() }
         await Task.yield()
         await clock.advance(by: .seconds(2))
@@ -46,7 +46,7 @@ struct ActivationScreenTests {
             codeGenerator: { "SC-4829-7316" },
             testSession: TestURLSession()
         )
-        let sut = ActivationScreenContent(module: module)
+        let sut = ActivationSheetContent(module: module)
         let scratching = Task { await module.scratchCardRepository.scratchCard() }
         await Task.yield()
         await clock.advance(by: .seconds(2))
@@ -71,7 +71,7 @@ struct ActivationScreenTests {
             testSession: TestURLSession(statusCode: 503)
         )
         let repository = module.scratchCardRepository
-        let sut = ActivationScreenContent(module: module)
+        let sut = ActivationSheetContent(module: module)
         let scratching = Task { await repository.scratchCard() }
         await Task.yield()
         await clock.advance(by: .seconds(2))

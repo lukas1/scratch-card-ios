@@ -45,7 +45,7 @@ struct ContentViewContent: View {
                     switch sheet {
                     case .activation:
                         NavigationStack {
-                            ActivationScreen(injector: injector)
+                            ActivationSheet(injector: injector)
                                 .toolbar {
                                     ToolbarItem(placement: .topBarLeading) {
                                         Button(.commonDone) { navigation.dismissSheet() }

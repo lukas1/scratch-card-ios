@@ -2,7 +2,7 @@ import Combine
 import Observation
 
 @Observable
-final class ActivationScreenViewModel {
+final class ActivationSheetViewModel {
     private(set) var code: String?
     private(set) var phase: ActivationPhase
 
