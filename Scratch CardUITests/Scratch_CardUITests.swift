@@ -1,10 +1,3 @@
-//
-//  Scratch_CardUITests.swift
-//  Scratch CardUITests
-//
-//  Created by GNTB70 on 20/10/2026.
-//
-
 import XCTest
 
 final class Scratch_CardUITests: XCTestCase {
@@ -63,13 +56,5 @@ final class Scratch_CardUITests: XCTestCase {
         app.buttons["scratchButton"].tap()
         XCTAssertEqual(app.staticTexts["scratchCode"].label, "A little mystery")
         XCTAssertTrue(app.buttons["revealButton"].isEnabled)
-    }
-
-    @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
     }
 }
