@@ -4,24 +4,25 @@ import Foundation
 final class ScratchCardRepository: ObservableObject {
     private let cardScratcher: CardScratcher
     private let scratchCardApi: ScratchCardApi
+    private let alertPresenter: AlertPresenter
     @Published private(set) var card: CardState
     @Published private(set) var isActivating = false
-    @Published private(set) var activationError: ActivationError?
     private var ongoingScratchingCardRequestId: UUID?
 
     init(
         cardScratcher: CardScratcher,
-        scratchCardApi: ScratchCardApi
+        scratchCardApi: ScratchCardApi,
+        alertPresenter: AlertPresenter
     ) {
         self.cardScratcher = cardScratcher
         self.scratchCardApi = scratchCardApi
+        self.alertPresenter = alertPresenter
         card = .unscratched
     }
 
     func reset() {
         ongoingScratchingCardRequestId = nil
         card = .unscratched
-        activationError = nil
     }
 
     func scratchCard() async {
@@ -49,7 +50,6 @@ final class ScratchCardRepository: ObservableObject {
         isActivating = true
         Task {
             defer { isActivating = false }
-            activationError = nil
             do {
                 try await scratchCardApi.activateCard(code: code)
                 if case .scratched(let currentCode) = card, currentCode == code {
@@ -57,17 +57,20 @@ final class ScratchCardRepository: ObservableObject {
                 }
             } catch let error as ActivationError {
                 if case .scratched(let currentCode) = card, currentCode == code {
-                    activationError = error
+                    present(error)
                 }
             } catch {
                 if case .scratched(let currentCode) = card, currentCode == code {
-                    activationError = .requestFailed
+                    present(.requestFailed)
                 }
             }
         }
     }
 
-    func dismissActivationError() {
-        activationError = nil
+    private func present(_ error: ActivationError) {
+        alertPresenter.alert = Alert(
+            title: String(localized: .activationErrorTitle),
+            message: error.message
+        )
     }
 }

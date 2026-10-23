@@ -12,7 +12,7 @@ struct ContentView: View {
 
 struct ContentViewContent: View {
     @Bindable private var navigation: Navigation
-    @ObservedObject private var scratchCardRepository: ScratchCardRepository
+    @Bindable private var alertPresenter: AlertPresenter
     private let injector: Injector
 
     init(
@@ -20,7 +20,7 @@ struct ContentViewContent: View {
     ) {
         self.injector = injector
         self.navigation = injector.globalModule.navigation
-        _scratchCardRepository = ObservedObject(wrappedValue: injector.scratchCardModule.scratchCardRepository)
+        self.alertPresenter = injector.globalModule.alertPresenter
     }
 
     var body: some View {
@@ -48,15 +48,12 @@ struct ContentViewContent: View {
                 .tint(Palette.ink)
             }
         }
-        .alert(.activationErrorTitle, isPresented: Binding(
-            get: { scratchCardRepository.activationError != nil },
-            set: { if !$0 { scratchCardRepository.dismissActivationError() } }
-        )) {
+        .alert(alertPresenter.alert?.title ?? "", isPresented: alertPresenter.isPresented) {
             Button(.commonGotIt, role: .cancel) {
-                scratchCardRepository.dismissActivationError()
+                alertPresenter.alert = nil
             }
         } message: {
-            Text(scratchCardRepository.activationError?.message ?? "")
+            Text(alertPresenter.alert?.message ?? "")
         }
     }
 }

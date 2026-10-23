@@ -16,7 +16,8 @@ struct SharedInjector: Injector {
         let scratchCardModule = ScratchCardModule(
             clock: clock,
             codeGenerator: codeGenerator,
-            restApiClient: RestApiClient(baseURL: baseURL, session: session)
+            restApiClient: RestApiClient(baseURL: baseURL, session: session),
+            alertPresenter: globalModule.alertPresenter
         )
         self.globalModule = globalModule
         self.scratchCardModule = scratchCardModule
