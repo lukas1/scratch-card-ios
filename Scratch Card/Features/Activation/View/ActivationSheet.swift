@@ -140,7 +140,7 @@ import Clocks
 
 private struct ActivationErrorPreview: View {
     private let module: ScratchCardModule
-    @StateObject private var repository: ScratchCardRepository
+    @State private var repository: ScratchCardRepository
 
     init(error: ActivationError) {
         let previewSession: PreviewURLSession
@@ -159,7 +159,7 @@ private struct ActivationErrorPreview: View {
             )
         )
         self.module = module
-        _repository = StateObject(wrappedValue: module.scratchCardRepository)
+        _repository = State(wrappedValue: module.scratchCardRepository)
     }
 
     var body: some View {

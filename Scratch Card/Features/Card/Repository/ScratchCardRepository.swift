@@ -1,12 +1,13 @@
-import Combine
 import Foundation
+import Observation
 
-final class ScratchCardRepository: ObservableObject {
+@Observable
+final class ScratchCardRepository {
     private let cardScratcher: CardScratcher
     private let scratchCardApi: ScratchCardApi
     private let alertPresenter: AlertPresenter
-    @Published private(set) var card: CardState
-    @Published private(set) var isActivating = false
+    private(set) var card: CardState
+    private(set) var isActivating = false
     private var ongoingScratchingCardRequestId: UUID?
 
     init(
