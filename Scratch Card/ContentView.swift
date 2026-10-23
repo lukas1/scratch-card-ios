@@ -6,21 +6,21 @@ struct ContentView: View {
     var body: some View {
         ContentViewContent(
             navigation: injector.globalModule.navigation,
-            model: injector.scratchCardModule.scratchCardRepository
+            scratchCardModule: injector.scratchCardModule
         )
     }
 }
 
 private struct ContentViewContent: View {
     @Bindable private var navigation: Navigation
-    @ObservedObject private var model: ScratchCardRepository
+    @ObservedObject private var scratchCardRepository: ScratchCardRepository
 
     init(
         navigation: Navigation,
-        model: ScratchCardRepository
+        scratchCardModule: ScratchCardModule
     ) {
         self.navigation = navigation
-        self.model = model
+        _scratchCardRepository = ObservedObject(wrappedValue: scratchCardModule.scratchCardRepository)
     }
 
     var body: some View {
@@ -38,7 +38,7 @@ private struct ContentViewContent: View {
             switch sheet {
             case .activation:
                 NavigationStack {
-                    ActivationScreen(model: model)
+                    ActivationScreen()
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
                                 Button(.commonDone) { navigation.dismissSheet() }
@@ -47,6 +47,16 @@ private struct ContentViewContent: View {
                 }
                 .tint(Palette.ink)
             }
+        }
+        .alert(.activationErrorTitle, isPresented: Binding(
+            get: { scratchCardRepository.activationError != nil },
+            set: { if !$0 { scratchCardRepository.dismissActivationError() } }
+        )) {
+            Button(.commonGotIt, role: .cancel) {
+                scratchCardRepository.dismissActivationError()
+            }
+        } message: {
+            Text(scratchCardRepository.activationError?.message ?? "")
         }
     }
 }
@@ -65,9 +75,20 @@ private struct ContentViewContent: View {
 }
 
 private func homePreview(card: CardState) -> some View {
-    let injector = SharedInjector()
-    injector.scratchCardModule.scratchCardRepository.card = card
+    let previewSession = PreviewURLSession()
+    let injector = SharedInjector(
+        codeGenerator: { "SC-4829-7316" },
+        baseURL: previewSession.baseURL,
+        session: previewSession.session
+    )
     return NavigationStack { HomeScreen() }
         .environment(\.injector, injector)
+        .task {
+            guard card != .unscratched else { return }
+            await injector.scratchCardModule.scratchCardRepository.scratchCard()
+            if card.isActivated {
+                injector.scratchCardModule.scratchCardRepository.activateCard()
+            }
+        }
 }
 #endif

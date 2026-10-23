@@ -6,9 +6,13 @@ struct ScratchCardModule {
 
     init(
         clock: any Clock<Duration> = ContinuousClock(),
-        codeGenerator: @escaping ScratchCardCodeGenerator = { UUID().uuidString }
+        codeGenerator: @escaping ScratchCardCodeGenerator = { UUID().uuidString },
+        restApiClient: RestApiClient
     ) {
         let cardScratcher = CardScratcher(clock: clock, codeGenerator: codeGenerator)
-        scratchCardRepository = ScratchCardRepository(clock: clock, cardScratcher: cardScratcher)
+        scratchCardRepository = ScratchCardRepository(
+            cardScratcher: cardScratcher,
+            scratchCardApi: ScratchCardApi(restClient: restApiClient)
+        )
     }
 }

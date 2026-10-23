@@ -8,7 +8,7 @@ struct ScratchScreenTests {
 
     @MainActor
     @Test func `GIVEN a hidden code THEN reveal is enabled`() throws {
-        let sut = makeSUT()
+        let (sut, _) = makeSUT()
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().isDisabled() == false)
     }
@@ -16,7 +16,7 @@ struct ScratchScreenTests {
     @MainActor
     @Test func `GIVEN a hidden code WHEN reveal time advances THEN the code is revealed`() async throws {
         let clock = TestClock()
-        let sut = makeSUT(clock: clock)
+        let (sut, _) = makeSUT(clock: clock)
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().tap()
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().isDisabled())
@@ -37,19 +37,22 @@ struct ScratchScreenTests {
     }
 
     @MainActor
-    @Test func `GIVEN a revealed code THEN reveal is disabled`() throws {
-        let sut = makeSUT(card: .scratched("SC-4829-7316"))
+    @Test func `GIVEN a revealed code THEN reveal is disabled`() async throws {
+        let clock = TestClock()
+        let (sut, module) = makeSUT(clock: clock)
+        let reveal = Task { await module.scratchCardRepository.scratchCard() }
+        await Task.yield()
+        await clock.advance(by: .seconds(2))
+        await reveal.value
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().isDisabled())
     }
 
     @MainActor
     private func makeSUT(
-        card: CardState = .unscratched,
         clock: any Clock<Duration> = ContinuousClock()
-    ) -> ScratchScreenContent {
-        let module = ScratchCardModule(clock: clock, codeGenerator: { expectedCode })
-        module.scratchCardRepository.card = card
-        return ScratchScreenContent(module: module)
+    ) -> (screen: ScratchScreenContent, module: ScratchCardModule) {
+        let module = ScratchCardModule(clock: clock, codeGenerator: { expectedCode }, testSession: TestURLSession())
+        return (ScratchScreenContent(module: module), module)
     }
 }

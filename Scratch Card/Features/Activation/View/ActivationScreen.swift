@@ -1,73 +1,41 @@
 import SwiftUI
 
-private enum ActivationPhase {
-    case ready
-    case activating
-    case activated
-}
+struct ActivationScreen: View {
+    @RequiredEnvironment(\.injector) private var injector: Injector
 
-private enum ActivationError: String, Identifiable {
-    case failed
-    case unexpected
-
-    var id: String { rawValue }
-    var message: String {
-        switch self {
-        case .failed: String(localized: .activationErrorFailed)
-        case .unexpected: String(localized: .activationErrorUnexpected)
-        }
+    var body: some View {
+        ActivationScreenContent(module: injector.scratchCardModule)
     }
 }
 
-struct ActivationScreen: View {
-    @ObservedObject private var model: ScratchCardRepository
+struct ActivationScreenContent: View {
+    @State private var viewModel: ActivationScreenViewModel
 
-    init(model: ScratchCardRepository) {
-        self.model = model
+    init(module: ScratchCardModule) {
+        _viewModel = State(wrappedValue: ActivationScreenViewModelFactory(module: module).make())
     }
 
     var body: some View {
-        ActivationScreenContent(
-            code: model.card.code,
-            phase: model.card.isActivated ? .activated : (model.isActivating ? .activating : .ready),
-            error: nil,
-            onActivate: model.activateForDemo
+        ActivationScreenPresentation(
+            code: viewModel.code,
+            phase: viewModel.phase,
+            onActivate: viewModel.activate
         )
     }
 }
 
-private struct ActivationScreenContent: View {
+private struct ActivationScreenPresentation: View {
     private let code: String?
     private let phase: ActivationPhase
-    private let error: ActivationError?
     private let onActivate: () -> Void
-    @State private var isErrorPresented: Bool
 
-    init(code: String?, phase: ActivationPhase, error: ActivationError?, onActivate: @escaping () -> Void) {
+    init(code: String?, phase: ActivationPhase, onActivate: @escaping () -> Void) {
         self.code = code
         self.phase = phase
-        self.error = error
         self.onActivate = onActivate
-        _isErrorPresented = State(initialValue: error != nil)
     }
 
     var body: some View {
-        Group {
-            if let error {
-                page
-                    .alert(.activationErrorTitle, isPresented: $isErrorPresented) {
-                        Button(.commonGotIt, role: .cancel) {}
-                    } message: {
-                        Text(error.message)
-                    }
-            } else {
-                page
-            }
-        }
-        .onChange(of: error) { _, newValue in isErrorPresented = newValue != nil }
-    }
-
-    private var page: some View {
         DestinationPage(
             title: String(localized: .activationTitle),
             description: String(localized: .activationDescription),
@@ -119,6 +87,7 @@ private struct ActivationScreenContent: View {
                     .tint(Palette.ink)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 12)
+                    .accessibilityIdentifier("activationProgress")
             }
             Text(.activationNote)
                 .font(.system(size: 12))
@@ -140,49 +109,64 @@ private struct ActivationScreenContent: View {
 
 #if !CODE_COVERAGE
 #Preview("Activation · Pending code") {
-    NavigationStack { ActivationScreenContent(code: nil, phase: .ready, error: nil, onActivate: {}) }
+    NavigationStack { ActivationScreenPresentation(code: nil, phase: .ready, onActivate: {}) }
 }
 
 #Preview("Activation · Pending, loading") {
-    NavigationStack { ActivationScreenContent(code: nil, phase: .activating, error: nil, onActivate: {}) }
+    NavigationStack { ActivationScreenPresentation(code: nil, phase: .activating, onActivate: {}) }
 }
 
 #Preview("Activation · Ready") {
-    NavigationStack { ActivationScreenContent(code: "SC-4829-7316", phase: .ready, error: nil, onActivate: {}) }
+    NavigationStack { ActivationScreenPresentation(code: "SC-4829-7316", phase: .ready, onActivate: {}) }
 }
 
 #Preview("Activation · Loading") {
-    NavigationStack { ActivationScreenContent(code: "SC-4829-7316", phase: .activating, error: nil, onActivate: {}) }
+    NavigationStack { ActivationScreenPresentation(code: "SC-4829-7316", phase: .activating, onActivate: {}) }
 }
 
 #Preview("Activation · Activated") {
-    NavigationStack { ActivationScreenContent(code: "SC-4829-7316", phase: .activated, error: nil, onActivate: {}) }
+    NavigationStack { ActivationScreenPresentation(code: "SC-4829-7316", phase: .activated, onActivate: {}) }
 }
 
-#Preview("Activation · Failed") {
-    NavigationStack { ActivationScreenContent(code: "SC-4829-7316", phase: .ready, error: .failed, onActivate: {}) }
+#Preview("Activation · Unsupported version error") {
+    ActivationErrorPreview(error: .unsupportedVersion("6.1"))
 }
 
-#Preview("Activation · Unexpected error") {
-    NavigationStack { ActivationScreenContent(code: "SC-4829-7316", phase: .ready, error: .unexpected, onActivate: {}) }
+#Preview("Activation · Request error") {
+    ActivationErrorPreview(error: .requestFailed)
 }
 
-#Preview("Activation · Pending, failed") {
-    NavigationStack { ActivationScreenContent(code: nil, phase: .ready, error: .failed, onActivate: {}) }
-}
+private struct ActivationErrorPreview: View {
+    private let module: ScratchCardModule
+    @StateObject private var repository: ScratchCardRepository
 
-#Preview("Activation · Pending, loading error") {
-    NavigationStack { ActivationScreenContent(code: nil, phase: .activating, error: .unexpected, onActivate: {}) }
-}
-
-#Preview("Activation · Loading error") {
-    NavigationStack {
-        ActivationScreenContent(
-            code: "SC-4829-7316",
-            phase: .activating,
-            error: .unexpected,
-            onActivate: {}
+    init(error: ActivationError) {
+        let previewSession: PreviewURLSession
+        switch error {
+        case .unsupportedVersion(let version):
+            previewSession = PreviewURLSession(response: .version(version))
+        case .requestFailed:
+            previewSession = PreviewURLSession(response: .failure)
+        }
+        let module = ScratchCardModule(
+            codeGenerator: { "SC-4829-7316" },
+            restApiClient: RestApiClient(
+                baseURL: previewSession.baseURL,
+                session: previewSession.session
+            )
         )
+        self.module = module
+        _repository = StateObject(wrappedValue: module.scratchCardRepository)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ActivationScreenContent(module: module)
+        }
+        .task {
+            await repository.scratchCard()
+            repository.activateCard()
+        }
     }
 }
 #endif

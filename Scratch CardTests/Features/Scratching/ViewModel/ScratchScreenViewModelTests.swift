@@ -7,7 +7,7 @@ struct ScratchScreenViewModelTests {
     @MainActor
     @Test func `GIVEN a reveal in progress WHEN reveal starts again THEN the original reveal completes on time`() async {
         let clock = TestClock()
-        let module = ScratchCardModule(clock: clock, codeGenerator: { expectedCode })
+        let module = ScratchCardModule(clock: clock, codeGenerator: { expectedCode }, testSession: TestURLSession())
         let viewModel = ScratchScreenViewModelFactory(module: module).make()
 
         viewModel.reveal()
@@ -30,7 +30,7 @@ struct ScratchScreenViewModelTests {
     @MainActor
     @Test func `GIVEN a reveal in progress WHEN the view model is released THEN the card stays unscratched`() async {
         let clock = TestClock()
-        let module = ScratchCardModule(clock: clock, codeGenerator: { expectedCode })
+        let module = ScratchCardModule(clock: clock, codeGenerator: { expectedCode }, testSession: TestURLSession())
         var viewModel: ScratchScreenViewModel? = ScratchScreenViewModelFactory(module: module).make()
 
         viewModel?.reveal()

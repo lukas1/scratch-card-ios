@@ -1,33 +1,27 @@
 import Combine
-import Clocks
 import Foundation
 
-// Local presentation state lets the screens be explored without an API or data layer.
 final class ScratchCardRepository: ObservableObject {
-    private let clock: any Clock<Duration>
     private let cardScratcher: CardScratcher
-    @Published var card: CardState = .unscratched
-    @Published var isActivating = false
+    private let scratchCardApi: ScratchCardApi
+    @Published private(set) var card: CardState
+    @Published private(set) var isActivating = false
+    @Published private(set) var activationError: ActivationError?
     private var ongoingScratchingCardRequestId: UUID?
 
-    init(clock: any Clock<Duration>, cardScratcher: CardScratcher) {
-        self.clock = clock
-        self.cardScratcher = cardScratcher
-    }
-
-    convenience init(
-        clock: any Clock<Duration> = ContinuousClock(),
-        codeGenerator: @escaping ScratchCardCodeGenerator = { UUID().uuidString }
+    init(
+        cardScratcher: CardScratcher,
+        scratchCardApi: ScratchCardApi
     ) {
-        self.init(
-            clock: clock,
-            cardScratcher: CardScratcher(clock: clock, codeGenerator: codeGenerator)
-        )
+        self.cardScratcher = cardScratcher
+        self.scratchCardApi = scratchCardApi
+        card = .unscratched
     }
 
     func reset() {
         ongoingScratchingCardRequestId = nil
         card = .unscratched
+        activationError = nil
     }
 
     func scratchCard() async {
@@ -50,15 +44,30 @@ final class ScratchCardRepository: ObservableObject {
         }
     }
 
-    func activateForDemo() {
+    func activateCard() {
         guard case .scratched(let code) = card, !isActivating else { return }
         isActivating = true
         Task {
-            try? await clock.sleep(for: .seconds(1))
-            if case .scratched(let currentCode) = card, currentCode == code {
-                card = .activated(code)
+            defer { isActivating = false }
+            activationError = nil
+            do {
+                try await scratchCardApi.activateCard(code: code)
+                if case .scratched(let currentCode) = card, currentCode == code {
+                    card = .activated(code)
+                }
+            } catch let error as ActivationError {
+                if case .scratched(let currentCode) = card, currentCode == code {
+                    activationError = error
+                }
+            } catch {
+                if case .scratched(let currentCode) = card, currentCode == code {
+                    activationError = .requestFailed
+                }
             }
-            isActivating = false
         }
+    }
+
+    func dismissActivationError() {
+        activationError = nil
     }
 }
