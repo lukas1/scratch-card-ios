@@ -5,31 +5,31 @@ struct ContentView: View {
 
     var body: some View {
         ContentViewContent(
-            navigation: injector.globalModule.navigation,
-            scratchCardModule: injector.scratchCardModule
+            injector: injector
         )
     }
 }
 
-private struct ContentViewContent: View {
+struct ContentViewContent: View {
     @Bindable private var navigation: Navigation
     @ObservedObject private var scratchCardRepository: ScratchCardRepository
+    private let injector: Injector
 
     init(
-        navigation: Navigation,
-        scratchCardModule: ScratchCardModule
+        injector: Injector
     ) {
-        self.navigation = navigation
-        _scratchCardRepository = ObservedObject(wrappedValue: scratchCardModule.scratchCardRepository)
+        self.injector = injector
+        self.navigation = injector.globalModule.navigation
+        _scratchCardRepository = ObservedObject(wrappedValue: injector.scratchCardModule.scratchCardRepository)
     }
 
     var body: some View {
         NavigationStack(path: $navigation.path) {
-            HomeScreen()
+            HomeScreen(injector: injector)
                 .navigationDestination(for: NavigationDestinations.self) { destination in
                     switch destination {
                     case .scratch:
-                        ScratchScreen()
+                        ScratchScreen(injector: injector)
                     }
                 }
         }
@@ -38,7 +38,7 @@ private struct ContentViewContent: View {
             switch sheet {
             case .activation:
                 NavigationStack {
-                    ActivationScreen()
+                    ActivationScreen(injector: injector)
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
                                 Button(.commonDone) { navigation.dismissSheet() }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ScratchScreen: View {
-    @RequiredEnvironment(\.injector) private var injector: Injector
+    let injector: Injector
 
     var body: some View {
         ScratchScreenContent(module: injector.scratchCardModule)

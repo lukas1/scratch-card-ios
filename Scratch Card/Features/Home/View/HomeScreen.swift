@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    @RequiredEnvironment(\.injector) private var injector: Injector
+    let injector: Injector
 
     var body: some View {
         HomeScreenContent(module: injector.homeModule)
@@ -220,8 +220,7 @@ private func homePreview(card: CardState) -> some View {
         baseURL: previewSession.baseURL,
         session: previewSession.session
     )
-    return NavigationStack { HomeScreen() }
-        .environment(\.injector, injector)
+    return NavigationStack { HomeScreen(injector: injector) }
         .task {
             guard card != .unscratched else { return }
             await injector.scratchCardModule.scratchCardRepository.scratchCard()

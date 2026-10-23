@@ -61,4 +61,29 @@ struct ActivationScreenTests {
         #expect(try sut.inspect().find(text: String(localized: .activationActionActivated)).string() == String(localized: .activationActionActivated))
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().isDisabled())
     }
+
+    @MainActor
+    @Test func `GIVEN a revealed code WHEN activation fails THEN the button still shows activate`() async throws {
+        let clock = TestClock()
+        let module = ScratchCardModule(
+            clock: clock,
+            codeGenerator: { "SC-4829-7316" },
+            testSession: TestURLSession(statusCode: 503)
+        )
+        let repository = module.scratchCardRepository
+        let sut = ActivationScreenContent(module: module)
+        let scratching = Task { await repository.scratchCard() }
+        await Task.yield()
+        await clock.advance(by: .seconds(2))
+        await scratching.value
+
+        try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
+
+        for _ in 0..<100 where repository.isActivating {
+            try await Task.sleep(for: .milliseconds(5))
+        }
+
+        #expect(try sut.inspect().find(text: String(localized: .activationActionActivate)).string() == String(localized: .activationActionActivate))
+        #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().isDisabled() == false)
+    }
 }
