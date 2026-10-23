@@ -136,6 +136,8 @@ private struct ActivationScreenPresentation: View {
     ActivationErrorPreview(error: .requestFailed)
 }
 
+import Clocks
+
 private struct ActivationErrorPreview: View {
     private let module: ScratchCardModule
     @StateObject private var repository: ScratchCardRepository
@@ -149,6 +151,7 @@ private struct ActivationErrorPreview: View {
             previewSession = PreviewURLSession(response: .failure)
         }
         let module = ScratchCardModule(
+            clock: ImmediateClock(),
             codeGenerator: { "SC-4829-7316" },
             restApiClient: RestApiClient(
                 baseURL: previewSession.baseURL,

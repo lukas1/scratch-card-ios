@@ -5,7 +5,7 @@ struct ScratchCardModule {
     let scratchCardRepository: ScratchCardRepository
 
     init(
-        clock: any Clock<Duration> = ContinuousClock(),
+        clock: any Clock<Duration>,
         codeGenerator: @escaping ScratchCardCodeGenerator = { UUID().uuidString },
         restApiClient: RestApiClient
     ) {
