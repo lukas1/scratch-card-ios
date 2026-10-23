@@ -17,6 +17,7 @@ final class HomeScreenViewModel {
         repository.$card
             .sink { [weak self] card in self?.card = card }
             .store(in: &cancellables)
+
     }
 
     func scratch() {
