@@ -60,35 +60,3 @@ private struct ContentViewContent: View {
         }
     }
 }
-
-#if !CODE_COVERAGE
-#Preview("Home · Unscratched") {
-    homePreview(card: .unscratched)
-}
-
-#Preview("Home · Scratched") {
-    homePreview(card: .scratched("SC-4829-7316"))
-}
-
-#Preview("Home · Activated") {
-    homePreview(card: .activated("SC-4829-7316"))
-}
-
-private func homePreview(card: CardState) -> some View {
-    let previewSession = PreviewURLSession()
-    let injector = SharedInjector(
-        codeGenerator: { "SC-4829-7316" },
-        baseURL: previewSession.baseURL,
-        session: previewSession.session
-    )
-    return NavigationStack { HomeScreen() }
-        .environment(\.injector, injector)
-        .task {
-            guard card != .unscratched else { return }
-            await injector.scratchCardModule.scratchCardRepository.scratchCard()
-            if card.isActivated {
-                injector.scratchCardModule.scratchCardRepository.activateCard()
-            }
-        }
-}
-#endif
