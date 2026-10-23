@@ -82,8 +82,7 @@ struct HomeScreenContent: View {
                     Button(action: viewModel.activate) {
                         ActionLabel(title: String(localized: .homeActionActivate))
                     }
-                    .buttonStyle(.bordered)
-                    .tint(Palette.ink)
+                    .buttonStyle(CardActionStyle(kind: .secondary))
                     .accessibilityIdentifier("activationButton")
                 } else {
                     Button {} label: {
@@ -184,16 +183,22 @@ struct CardActionStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(kind == .primary ? .white : Palette.ink)
+            .contentShape(RoundedRectangle(cornerRadius: 18))
+            .foregroundStyle(foregroundColor)
             .background(kind == .primary ? Palette.ink : .clear, in: RoundedRectangle(cornerRadius: 18))
             .overlay {
                 if kind == .secondary {
                     RoundedRectangle(cornerRadius: 18)
-                        .strokeBorder(Palette.ink.opacity(0.25))
+                        .strokeBorder(Palette.ink.opacity(0.095))
                         .allowsHitTesting(false)
                 }
             }
-            .opacity(isEnabled ? (configuration.isPressed ? 0.7 : 1) : 0.38)
+            .opacity(kind == .primary && !isEnabled ? 0.38 : (configuration.isPressed ? 0.7 : 1))
+    }
+
+    private var foregroundColor: Color {
+        if kind == .primary { return .white }
+        return Palette.ink.opacity(isEnabled ? 1 : 0.38)
     }
 }
 
