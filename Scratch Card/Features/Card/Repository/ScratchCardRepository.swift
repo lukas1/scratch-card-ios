@@ -59,10 +59,6 @@ final class ScratchCardRepository: ObservableObject {
                 if case .scratched(let currentCode) = card, currentCode == code {
                     present(error)
                 }
-            } catch {
-                if case .scratched(let currentCode) = card, currentCode == code {
-                    present(.requestFailed)
-                }
             }
         }
     }

@@ -1,15 +1,8 @@
 import Foundation
 
-enum ActivationError: Error, Equatable, Identifiable {
+enum ActivationError: Error, Equatable {
     case requestFailed
     case unsupportedVersion(String)
-
-    var id: String {
-        switch self {
-        case .requestFailed: "requestFailed"
-        case .unsupportedVersion(let version): "unsupportedVersion-\(version)"
-        }
-    }
 
     var message: String {
         switch self {
@@ -28,7 +21,7 @@ struct ScratchCardApi {
         self.restClient = restClient
     }
 
-    func activateCard(code: String) async throws {
+    func activateCard(code: String) async throws(ActivationError) {
         do {
             let payload: ActivationVersion = try await restClient.request(
                 method: .get,

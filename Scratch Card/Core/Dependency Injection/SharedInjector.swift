@@ -8,7 +8,7 @@ struct SharedInjector: Injector {
 
     init(
         clock: any Clock<Duration> = ContinuousClock(),
-        codeGenerator: @escaping ScratchCardCodeGenerator = { UUID().uuidString },
+        codeGenerator: @escaping ScratchCardCodeGenerator,
         baseURL: URL = URL(string: "https://api.o2.sk/")!,
         session: URLSession
     ) {

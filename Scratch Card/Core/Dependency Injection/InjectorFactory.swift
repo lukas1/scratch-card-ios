@@ -18,7 +18,7 @@ enum InjectorFactory {
             session: session
         )
 #else
-        return SharedInjector(baseURL: baseURL, session: .shared)
+        return SharedInjector(codeGenerator: { UUID().uuidString }, baseURL: baseURL, session: .shared)
 #endif
     }
 }

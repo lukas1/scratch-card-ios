@@ -134,9 +134,9 @@ guard executableLines > 0 else {
 let percentage = Double(coveredLines) / Double(executableLines) * 100
 print(String(format: "App code coverage: %.2f%% (%d/%d executable source lines)", percentage, coveredLines, executableLines))
 
-let minimumCoveragePercentage = 96.0
+let minimumCoveragePercentage = 99.0
 guard percentage >= minimumCoveragePercentage else {
-    fputs("App code coverage must be at least 96%. Uncovered files:\n", stderr)
+    fputs("App code coverage must be at least 99%. Uncovered files:\n", stderr)
     for file in uncoveredFiles {
         let filePercentage = Double(file.covered) / Double(file.executable) * 100
         fputs(String(format: "  %.2f%% (%d/%d): %@\n", filePercentage, file.covered, file.executable, file.path), stderr)

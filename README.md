@@ -17,13 +17,13 @@ SwiftLint is integrated through Swift Package Manager for the **Scratch Card** a
 
 To edit `Project.swift` or `Tuist.swift` in Xcode with code completion, run `tuist edit`. Run `tuist generate` again after changing a manifest.
 
-To run both unit and UI tests with the 96% app coverage gate, run:
+To run both unit and UI tests with the 99% app coverage gate, run:
 
 ```sh
 ./scripts/test-with-coverage.sh
 ```
 
-The scheme's Test action uses the `Coverage` build configuration, which compiles out SwiftUI previews marked with `#if !CODE_COVERAGE`. The Swift script counts distinct executable app source lines in the coverage archive and exits unsuccessfully if coverage is below 96%. Running tests directly in Xcode or with `xcodebuild test` does not enforce the threshold.
+The scheme's Test action uses the `Coverage` build configuration, which compiles out SwiftUI previews marked with `#if !CODE_COVERAGE`. The Swift script counts distinct executable app source lines in the coverage archive and exits unsuccessfully if coverage is below 99%. Running tests directly in Xcode or with `xcodebuild test` does not enforce the threshold.
 
 # Original Assignment
 
@@ -61,3 +61,8 @@ displayed. If the user closes the screen during this operation, the operation sh
 should be covered by unit tests.
 
 Publish the source code on github.com or a similar service, and send us the URL to the repository.
+
+## Solution notes
+
+The project does not aim at 100% line code coverage, only 99%. There are some scenarios, that while could be tested, are too contrived to justify
+test complexity created just to artificially claim 100% line code coverage. 99% is still extremely high number.

@@ -6,7 +6,7 @@ struct ScratchCardModule {
 
     init(
         clock: any Clock<Duration>,
-        codeGenerator: @escaping ScratchCardCodeGenerator = { UUID().uuidString },
+        codeGenerator: @escaping ScratchCardCodeGenerator,
         restApiClient: RestApiClient,
         alertPresenter: AlertPresenter = AlertPresenter()
     ) {
