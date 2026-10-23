@@ -24,6 +24,8 @@ struct ContentViewContent: View {
     }
 
     var body: some View {
+        let isSheetPresented = navigation.sheet != nil
+
         NavigationStack(path: $navigation.path) {
             HomeScreen(injector: injector)
                 .navigationDestination(for: NavigationDestinations.self) { destination in
@@ -34,26 +36,26 @@ struct ContentViewContent: View {
                 }
         }
         .tint(Palette.ink)
+        .routedAlerts(using: alertPresenter, isHostActive: { !isSheetPresented && navigation.sheet == nil })
         .sheet(item: $navigation.sheet) { sheet in
-            switch sheet {
-            case .activation:
-                NavigationStack {
-                    ActivationScreen(injector: injector)
-                        .toolbar {
-                            ToolbarItem(placement: .topBarLeading) {
-                                Button(.commonDone) { navigation.dismissSheet() }
-                            }
+            AlertHost(
+                alertPresenter: alertPresenter,
+                isHostActive: { navigation.sheet != nil },
+                content: {
+                    switch sheet {
+                    case .activation:
+                        NavigationStack {
+                            ActivationScreen(injector: injector)
+                                .toolbar {
+                                    ToolbarItem(placement: .topBarLeading) {
+                                        Button(.commonDone) { navigation.dismissSheet() }
+                                    }
+                                }
                         }
+                        .tint(Palette.ink)
+                    }
                 }
-                .tint(Palette.ink)
-            }
-        }
-        .alert(alertPresenter.alert?.title ?? "", isPresented: alertPresenter.isPresented) {
-            Button(.commonGotIt, role: .cancel) {
-                alertPresenter.alert = nil
-            }
-        } message: {
-            Text(alertPresenter.alert?.message ?? "")
+            )
         }
     }
 }

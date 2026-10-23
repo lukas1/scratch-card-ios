@@ -32,12 +32,14 @@ private class SuccessfulResponseURLProtocol: URLProtocol {
         guard let url = request.url,
               let response = HTTPURLResponse(
                 url: url,
-                statusCode: 200,
+                statusCode: ProcessInfo.processInfo.arguments.contains("-ui-test-activation-failure") ? 503 : 200,
                 httpVersion: nil,
                 headerFields: nil
               ) else { return }
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-        client?.urlProtocol(self, didLoad: Data(#"{"ios":"6.24"}"#.utf8))
+        if response.statusCode == 200 {
+            client?.urlProtocol(self, didLoad: Data(#"{"ios":"6.24"}"#.utf8))
+        }
         client?.urlProtocolDidFinishLoading(self)
     }
 

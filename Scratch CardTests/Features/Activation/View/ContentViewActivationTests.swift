@@ -12,7 +12,7 @@ struct ContentViewActivationTests {
 
         try await activate(from: sut)
 
-        #expect((try? sut.inspect().navigationStack().alert()) == nil)
+        #expect((try? sut.inspect().find(ViewType.Alert.self)) == nil)
     }
 
     @MainActor
@@ -47,13 +47,31 @@ struct ContentViewActivationTests {
     }
 
     @MainActor
+    @Test func `GIVEN activation is running WHEN the sheet closes before failure THEN the root alert is shown`() async throws {
+        let sut = await makeSUT(testSession: TestURLSession(statusCode: 503, delay: .milliseconds(100)))
+
+        try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().tap()
+        let sheet = try sut.inspect().navigationStack().sheet()
+        try sheet.find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
+        try sheet.dismiss()
+
+        for _ in 0..<50 where (try? sut.inspect().navigationStack().alert()) == nil {
+            try await Task.sleep(for: .milliseconds(20))
+        }
+
+        let alert = try sut.inspect().navigationStack().alert()
+        #expect(try alert.title().string() == String(localized: .activationErrorTitle))
+        #expect(try alert.message().text().string() == String(localized: .activationErrorUnexpected))
+    }
+
+    @MainActor
     @Test func `GIVEN an activation error alert WHEN dismissed THEN the alert is no longer shown`() async throws {
         let sut = await makeSUT(testSession: TestURLSession(statusCode: 503))
 
         try await activate(from: sut)
-        try sut.inspect().navigationStack().alert().actions().button(0).tap()
+        try sut.inspect().find(ViewType.Alert.self).actions().button(0).tap()
 
-        #expect((try? sut.inspect().navigationStack().alert()) == nil)
+        #expect((try? sut.inspect().find(ViewType.Alert.self)) == nil)
     }
 
     @MainActor
@@ -78,14 +96,14 @@ struct ContentViewActivationTests {
     private func activate(from sut: ContentViewContent) async throws {
         try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().tap()
         try sut.inspect().navigationStack().sheet().find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
-        for _ in 0..<100 where (try? sut.inspect().navigationStack().alert()) == nil {
+        for _ in 0..<100 where (try? sut.inspect().find(ViewType.Alert.self)) == nil {
             await Task.yield()
         }
     }
 
     @MainActor
     private func assertAlert(in sut: ContentViewContent, message: String) throws {
-        let alert = try sut.inspect().navigationStack().alert()
+        let alert = try sut.inspect().find(ViewType.Alert.self)
         #expect(try alert.title().string() == String(localized: .activationErrorTitle))
         #expect(try alert.message().text().string() == message)
     }

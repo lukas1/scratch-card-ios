@@ -40,6 +40,26 @@ final class Scratch_CardUITests: XCTestCase {
     }
 
     @MainActor
+    func testGIVENActivationFailsWHENErrorAlertIsShownTHENActivationSheetRemainsPresented() throws {
+        XCUIDevice.shared.orientation = .portrait
+        let app = XCUIApplication()
+        app.launchArguments.append("-ui-test-activation-failure")
+        app.launch()
+
+        app.buttons["scratchButton"].tap()
+        app.buttons["revealButton"].tap()
+        XCTAssertTrue(app.staticTexts["YOUR UNIQUE CODE"].waitForExistence(timeout: 5))
+
+        app.navigationBars.buttons.firstMatch.tap()
+        app.buttons["activationButton"].tap()
+        XCTAssertTrue(app.staticTexts["Activate your card"].waitForExistence(timeout: 5))
+        app.buttons["activateCardButton"].tap()
+
+        XCTAssertTrue(app.alerts.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["activateCardButton"].exists)
+    }
+
+    @MainActor
     func testGIVENRevealInProgressWHENBackIsTappedTHENScratchingIsCancelled() throws {
         XCUIDevice.shared.orientation = .portrait
         let app = XCUIApplication()

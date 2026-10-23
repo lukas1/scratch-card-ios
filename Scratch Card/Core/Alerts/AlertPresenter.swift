@@ -9,10 +9,10 @@ struct Alert {
 final class AlertPresenter {
     var alert: Alert?
 
-    var isPresented: Binding<Bool> {
+    func isPresented(isHostActive: @escaping () -> Bool) -> Binding<Bool> {
         Binding(
-            get: { self.alert != nil },
-            set: { if !$0 { self.alert = nil } }
+            get: { isHostActive() && self.alert != nil },
+            set: { if !$0 && isHostActive() { self.alert = nil } }
         )
     }
 }
