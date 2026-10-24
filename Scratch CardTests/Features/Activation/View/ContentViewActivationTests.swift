@@ -7,34 +7,40 @@ struct ContentViewActivationTests {
     private let expectedCode = "SC-4829-7316"
 
     @MainActor
-    @Test func `GIVEN a scratched card WHEN activation succeeds THEN no alert is shown`() async throws {
-        let sut = await makeSUT()
+    @Test(arguments: ["6.1.1", "6.2", "6.10", "6.1.10", "7"])
+    func `GIVEN a version above the threshold WHEN activated THEN the card is activated`(version: String) async throws {
+        let sut = await makeSUT(testSession: versionSession(version))
 
         try await activate(from: sut)
 
+        let activatedStatus = String(localized: .cardStatusActivated)
+        for _ in 0..<100 where (try? sut.inspect().find(text: activatedStatus)) == nil {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        #expect(try sut.inspect().find(text: activatedStatus).string() == activatedStatus)
+        #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().isDisabled())
         #expect((try? sut.inspect().find(ViewType.Alert.self)) == nil)
     }
 
     @MainActor
-    @Test func `GIVEN activation returns an unsupported version WHEN activated THEN an alert with the failure message is shown`() async throws {
-        let sut = await makeSUT(
-            testSession: TestURLSession(responseData: Data(#"{"ios":"6.1"}"#.utf8))
-        )
+    @Test(arguments: ["5.99", "6", "6.0", "6.1", "6.1.0", "6.1.0.0"])
+    func `GIVEN a version at or below the threshold WHEN activated THEN the failure alert is shown`(version: String) async throws {
+        let sut = await makeSUT(testSession: versionSession(version))
 
         try await activate(from: sut)
 
-        try assertAlert(in: sut, message: String(localized: .activationErrorFailed))
+        try await assertAlert(in: sut, message: String(localized: .activationErrorFailed))
     }
 
     @MainActor
-    @Test func `GIVEN activation returns an invalid version WHEN activated THEN an alert with the unexpected error message is shown`() async throws {
-        let sut = await makeSUT(
-            testSession: TestURLSession(responseData: Data(#"{"ios":"unknown"}"#.utf8))
-        )
+    @Test(arguments: ["", "6..2", "6.a", "6.1.", "-6.2", "+6.2", "999999999999999999999999", "unknown"])
+    func `GIVEN an invalid numeric version WHEN activated THEN the unexpected error alert is shown`(version: String) async throws {
+        let sut = await makeSUT(testSession: versionSession(version))
 
         try await activate(from: sut)
 
-        try assertAlert(in: sut, message: String(localized: .activationErrorUnexpected))
+        try await assertAlert(in: sut, message: String(localized: .activationErrorUnexpected))
     }
 
     @MainActor
@@ -43,7 +49,7 @@ struct ContentViewActivationTests {
 
         try await activate(from: sut)
 
-        try assertAlert(in: sut, message: String(localized: .activationErrorUnexpected))
+        try await assertAlert(in: sut, message: String(localized: .activationErrorUnexpected))
     }
 
     @MainActor
@@ -87,6 +93,7 @@ struct ContentViewActivationTests {
         let sut = await makeSUT(testSession: TestURLSession(statusCode: 503))
 
         try await activate(from: sut)
+        try await assertAlert(in: sut, message: String(localized: .activationErrorUnexpected))
         try sut.inspect().find(ViewType.Alert.self).actions().button(0).tap()
 
         #expect((try? sut.inspect().find(ViewType.Alert.self)) == nil)
@@ -114,15 +121,20 @@ struct ContentViewActivationTests {
     private func activate(from sut: ContentViewContent) async throws {
         try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().tap()
         try sut.inspect().navigationStack().sheet().find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
-        for _ in 0..<100 where (try? sut.inspect().find(ViewType.Alert.self)) == nil {
-            await Task.yield()
-        }
     }
 
     @MainActor
-    private func assertAlert(in sut: ContentViewContent, message: String) throws {
+    private func assertAlert(in sut: ContentViewContent, message: String) async throws {
+        for _ in 0..<100 where (try? sut.inspect().find(ViewType.Alert.self)) == nil {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
         let alert = try sut.inspect().find(ViewType.Alert.self)
         #expect(try alert.title().string() == String(localized: .activationErrorTitle))
         #expect(try alert.message().text().string() == message)
+    }
+
+    private func versionSession(_ version: String) -> TestURLSession {
+        TestURLSession(responseData: Data("{\"ios\":\"\(version)\"}".utf8))
     }
 }
