@@ -54,12 +54,15 @@ struct ContentViewActivationTests {
 
     @MainActor
     @Test func `GIVEN activation is running WHEN the sheet closes before failure THEN the root alert is shown`() async throws {
-        let sut = await makeSUT(testSession: TestURLSession(statusCode: 503, delay: .milliseconds(100)))
+        let responseGate = TestResponseGate()
+        let sut = await makeSUT(testSession: TestURLSession(statusCode: 503, responseGate: responseGate))
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().tap()
         let sheet = try sut.inspect().navigationStack().sheet()
         try sheet.find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
+        await responseGate.waitUntilRequested()
         try sheet.dismiss()
+        await responseGate.release()
 
         #expect(try await waitUntilExists {
             try sut.inspect().navigationStack().alert()
@@ -72,12 +75,15 @@ struct ContentViewActivationTests {
 
     @MainActor
     @Test func `GIVEN activation is running WHEN the sheet closes before success THEN the card is activated`() async throws {
-        let sut = await makeSUT(testSession: TestURLSession(delay: .milliseconds(150)))
+        let responseGate = TestResponseGate()
+        let sut = await makeSUT(testSession: TestURLSession(responseGate: responseGate))
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().tap()
         let sheet = try sut.inspect().navigationStack().sheet()
         try sheet.find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
+        await responseGate.waitUntilRequested()
         try sheet.dismiss()
+        await responseGate.release()
 
         let activatedStatus = String(localized: .cardStatusActivated)
         #expect(try await waitUntilExists {

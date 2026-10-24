@@ -14,7 +14,8 @@ struct ActivationSheetTests {
 
     @MainActor
     @Test func `GIVEN a revealed code WHEN activation is tapped THEN activation starts and disables the button`() async throws {
-        let testSession = TestURLSession(delay: .milliseconds(150))
+        let responseGate = TestResponseGate()
+        let testSession = TestURLSession(responseGate: responseGate)
         let clock = TestClock()
         let module = ScratchCardModule(
             clock: clock,
@@ -29,10 +30,11 @@ struct ActivationSheetTests {
         await scratching.value
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
-        await Task.yield()
+        await responseGate.waitUntilRequested()
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().isDisabled())
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activationProgress").isResponsive())
+        await responseGate.release()
         #expect(try await waitUntil { !model.isActivating })
     }
 

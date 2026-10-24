@@ -8,14 +8,14 @@ struct TestURLSession {
     init(
         statusCode: Int = 200,
         responseData: Data = Data(#"{"ios":"6.24"}"#.utf8),
-        delay: Duration = .zero
+        responseGate: TestResponseGate? = nil
     ) {
         let host = "\(UUID().uuidString.lowercased()).example.com"
         self.host = host
         baseURL = URL(string: "https://\(host)/")!
         StubURLProtocol.register(
             host: host,
-            response: .init(statusCode: statusCode, data: responseData, delay: delay)
+            response: .init(statusCode: statusCode, data: responseData, gate: responseGate)
         )
 
         let configuration = URLSessionConfiguration.ephemeral
@@ -25,6 +25,39 @@ struct TestURLSession {
 
     var receivedRequest: URLRequest? {
         StubURLProtocol.receivedRequest(for: host)
+    }
+}
+
+actor TestResponseGate {
+    private var hasReceivedRequest = false
+    private var isReleased = false
+    private var requestContinuation: CheckedContinuation<Void, Never>?
+    private var releaseContinuation: CheckedContinuation<Void, Never>?
+
+    func waitUntilRequested() async {
+        guard !hasReceivedRequest else { return }
+        await withCheckedContinuation { continuation in
+            requestContinuation = continuation
+        }
+    }
+
+    func waitUntilReleased() async {
+        guard !isReleased else { return }
+        await withCheckedContinuation { continuation in
+            releaseContinuation = continuation
+        }
+    }
+
+    func requestReceived() {
+        hasReceivedRequest = true
+        requestContinuation?.resume()
+        requestContinuation = nil
+    }
+
+    func release() {
+        isReleased = true
+        releaseContinuation?.resume()
+        releaseContinuation = nil
     }
 }
 
@@ -64,7 +97,7 @@ private final class StubURLProtocol: URLProtocol {
     struct Response {
         let statusCode: Int
         let data: Data
-        let delay: Duration
+        let gate: TestResponseGate?
     }
 
     private static let lock = NSLock()
@@ -96,8 +129,9 @@ private final class StubURLProtocol: URLProtocol {
         guard let response else { return }
 
         Task {
-            if response.delay > .zero {
-                try? await Task.sleep(for: response.delay)
+            if let gate = response.gate {
+                await gate.requestReceived()
+                await gate.waitUntilReleased()
             }
             guard let url = request.url,
                   let httpResponse = HTTPURLResponse(
