@@ -21,6 +21,8 @@ struct ScratchScreenContent: View {
             isRevealing: viewModel.isRevealing,
             onReveal: viewModel.reveal
         )
+        .onDisappear(perform: viewModel.cancelReveal)
+        .id("scratchScreen")
     }
 }
 

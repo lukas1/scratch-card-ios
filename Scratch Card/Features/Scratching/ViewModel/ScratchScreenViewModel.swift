@@ -22,6 +22,10 @@ final class ScratchScreenViewModel {
         }
     }
 
+    func cancelReveal() {
+        revealingTask?.cancel()
+    }
+
     deinit {
         revealingTask?.cancel()
     }

@@ -49,10 +49,35 @@ struct ScratchScreenTests {
     }
 
     @MainActor
+    @Test func `GIVEN a reveal near completion WHEN the screen disappears THEN a retry reveals the card`() async throws {
+        let clock = TestClock()
+        let (sut, module) = makeSUT(clock: clock)
+
+        try sut.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().tap()
+        await clock.advance(by: .milliseconds(1_999))
+
+        try sut.inspect().find(viewWithId: "scratchScreen").callOnDisappear()
+        await clock.advance(by: .milliseconds(1))
+
+        #expect(module.scratchCardRepository.card == .unscratched)
+
+        let retryScreen = makeSUT(module: module)
+        try retryScreen.inspect().find(viewWithAccessibilityIdentifier: "revealButton").button().tap()
+        await clock.advance(by: .seconds(2))
+
+        #expect(module.scratchCardRepository.card == .scratched(expectedCode))
+    }
+
+    @MainActor
     private func makeSUT(
         clock: any Clock<Duration> = ContinuousClock()
     ) -> (screen: ScratchScreenContent, module: ScratchCardModule) {
         let module = ScratchCardModule(clock: clock, codeGenerator: { expectedCode }, testSession: TestURLSession())
-        return (ScratchScreenContent(module: module), module)
+        return (makeSUT(module: module), module)
+    }
+
+    @MainActor
+    private func makeSUT(module: ScratchCardModule) -> ScratchScreenContent {
+        ScratchScreenContent(module: module)
     }
 }
