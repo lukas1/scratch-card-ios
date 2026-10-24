@@ -65,6 +65,24 @@ struct ContentViewActivationTests {
     }
 
     @MainActor
+    @Test func `GIVEN activation is running WHEN the sheet closes before success THEN the card is activated`() async throws {
+        let sut = await makeSUT(testSession: TestURLSession(delay: .milliseconds(150)))
+
+        try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().tap()
+        let sheet = try sut.inspect().navigationStack().sheet()
+        try sheet.find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
+        try sheet.dismiss()
+
+        let activatedStatus = String(localized: .cardStatusActivated)
+        for _ in 0..<100 where (try? sut.inspect().find(text: activatedStatus)) == nil {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        #expect(try sut.inspect().find(text: activatedStatus).string() == activatedStatus)
+        #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().isDisabled())
+    }
+
+    @MainActor
     @Test func `GIVEN an activation error alert WHEN dismissed THEN the alert is no longer shown`() async throws {
         let sut = await makeSUT(testSession: TestURLSession(statusCode: 503))
 
