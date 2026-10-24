@@ -33,9 +33,7 @@ struct ActivationSheetTests {
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().isDisabled())
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activationProgress").isResponsive())
-        for _ in 0..<100 where model.isActivating {
-            try await Task.sleep(for: .milliseconds(5))
-        }
+        #expect(try await waitUntil { !model.isActivating })
     }
 
     @MainActor
@@ -79,9 +77,7 @@ struct ActivationSheetTests {
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
 
-        for _ in 0..<100 where repository.isActivating {
-            try await Task.sleep(for: .milliseconds(5))
-        }
+        #expect(try await waitUntil { !repository.isActivating })
 
         #expect(try sut.inspect().find(text: String(localized: .activationActionActivate)).string() == String(localized: .activationActionActivate))
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().isDisabled() == false)

@@ -6,7 +6,7 @@ import Clocks
 struct HomeScreenTests {
     @MainActor
     @Test func `GIVEN an unscratched card THEN scratch is enabled and activation is disabled`() async throws {
-        let (_, sut) = await makeSUT()
+        let (_, sut) = try await makeSUT()
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "scratchButton").button().isDisabled() == false)
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().isDisabled())
@@ -14,7 +14,7 @@ struct HomeScreenTests {
 
     @MainActor
     @Test func `GIVEN an unscratched card WHEN scratch is tapped THEN scratch navigation is pushed`() async throws {
-        let (injector, sut) = await makeSUT()
+        let (injector, sut) = try await makeSUT()
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "scratchButton").button().tap()
 
@@ -23,7 +23,7 @@ struct HomeScreenTests {
 
     @MainActor
     @Test func `GIVEN a scratched card WHEN activation is tapped THEN activation sheet is presented`() async throws {
-        let (injector, sut) = await makeSUT(card: .scratched("SC-4829-7316"))
+        let (injector, sut) = try await makeSUT(card: .scratched("SC-4829-7316"))
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().tap()
 
@@ -32,7 +32,7 @@ struct HomeScreenTests {
 
     @MainActor
     @Test func `GIVEN a card WHEN reset is tapped THEN the card returns to unscratched`() async throws {
-        let (injector, sut) = await makeSUT(card: .activated("SC-4829-7316"))
+        let (injector, sut) = try await makeSUT(card: .activated("SC-4829-7316"))
 
         try sut.inspect().find(viewWithAccessibilityIdentifier: "resetCardButton").button().tap()
 
@@ -40,7 +40,7 @@ struct HomeScreenTests {
     }
 
     @MainActor
-    private func makeSUT(card: CardState = .unscratched) async -> (injector: SharedInjector, sut: HomeScreenContent) {
+    private func makeSUT(card: CardState = .unscratched) async throws -> (injector: SharedInjector, sut: HomeScreenContent) {
         let clock = TestClock()
         let testSession = TestURLSession()
         let injector = SharedInjector(
@@ -56,9 +56,9 @@ struct HomeScreenTests {
         }
         if card.isActivated {
             injector.scratchCardModule.scratchCardRepository.activateCard()
-            for _ in 0..<100 where injector.scratchCardModule.scratchCardRepository.isActivating {
-                try? await Task.sleep(for: .milliseconds(1))
-            }
+            #expect(try await waitUntil {
+                !injector.scratchCardModule.scratchCardRepository.isActivating
+            })
         }
         return (injector, HomeScreenContent(module: injector.homeModule))
     }

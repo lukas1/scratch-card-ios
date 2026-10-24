@@ -14,9 +14,9 @@ struct ContentViewActivationTests {
         try await activate(from: sut)
 
         let activatedStatus = String(localized: .cardStatusActivated)
-        for _ in 0..<100 where (try? sut.inspect().find(text: activatedStatus)) == nil {
-            try await Task.sleep(for: .milliseconds(10))
-        }
+        #expect(try await waitUntilExists {
+            try sut.inspect().find(text: activatedStatus)
+        })
 
         #expect(try sut.inspect().find(text: activatedStatus).string() == activatedStatus)
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().isDisabled())
@@ -61,9 +61,9 @@ struct ContentViewActivationTests {
         try sheet.find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
         try sheet.dismiss()
 
-        for _ in 0..<50 where (try? sut.inspect().navigationStack().alert()) == nil {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        #expect(try await waitUntilExists {
+            try sut.inspect().navigationStack().alert()
+        })
 
         let alert = try sut.inspect().navigationStack().alert()
         #expect(try alert.title().string() == String(localized: .activationErrorTitle))
@@ -80,9 +80,9 @@ struct ContentViewActivationTests {
         try sheet.dismiss()
 
         let activatedStatus = String(localized: .cardStatusActivated)
-        for _ in 0..<100 where (try? sut.inspect().find(text: activatedStatus)) == nil {
-            try await Task.sleep(for: .milliseconds(10))
-        }
+        #expect(try await waitUntilExists {
+            try sut.inspect().find(text: activatedStatus)
+        })
 
         #expect(try sut.inspect().find(text: activatedStatus).string() == activatedStatus)
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activationButton").button().isDisabled())
@@ -125,9 +125,9 @@ struct ContentViewActivationTests {
 
     @MainActor
     private func assertAlert(in sut: ContentViewContent, message: String) async throws {
-        for _ in 0..<100 where (try? sut.inspect().find(ViewType.Alert.self)) == nil {
-            try await Task.sleep(for: .milliseconds(10))
-        }
+        #expect(try await waitUntilExists {
+            try sut.inspect().find(ViewType.Alert.self)
+        })
 
         let alert = try sut.inspect().find(ViewType.Alert.self)
         #expect(try alert.title().string() == String(localized: .activationErrorTitle))

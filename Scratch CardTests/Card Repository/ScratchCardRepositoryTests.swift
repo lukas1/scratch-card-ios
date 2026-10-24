@@ -90,7 +90,7 @@ struct ScratchCardRepositoryTests {
         )
         await scratch(repository, clock: clock)
         repository.activateCard()
-        try await waitForActivationToFinish(repository)
+        #expect(try await waitUntil { !repository.isActivating })
 
         await assertRevealDoesNotStart(
             for: .activated(expectedCode),
@@ -117,13 +117,6 @@ struct ScratchCardRepositoryTests {
         await Task.yield()
         await clock.advance(by: .seconds(2))
         await task.value
-    }
-
-    @MainActor
-    private func waitForActivationToFinish(_ repository: ScratchCardRepository) async throws {
-        for _ in 0..<100 where repository.isActivating {
-            try await Task.sleep(for: .milliseconds(1))
-        }
     }
 
     @MainActor
