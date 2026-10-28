@@ -107,13 +107,13 @@ struct ContentViewActivationTests {
 
     @MainActor
     private func makeSUT(
-        testSession: TestURLSession = TestURLSession()
+        testSession: TestURLSession? = nil
     ) async -> ContentViewContent {
         let clock = TestClock()
         let injector = SharedInjector(
             clock: clock,
             codeGenerator: { expectedCode },
-            testSession: testSession
+            testSession: testSession ?? TestURLSession()
         )
         let sut = ContentViewContent(injector: injector)
         let scratching = Task { await injector.scratchCardModule.scratchCardRepository.scratchCard() }

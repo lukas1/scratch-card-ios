@@ -7,8 +7,10 @@ private let commonSettings: SettingsDictionary = [
     "CODE_SIGN_STYLE": "Automatic",
     "CURRENT_PROJECT_VERSION": "1",
     "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+    "GENERATE_INFOPLIST_FILE": "YES",
     "MARKETING_VERSION": "1.0",
     "GCC_TREAT_WARNINGS_AS_ERRORS": "YES",
+    "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
     "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
     "SWIFT_TREAT_WARNINGS_AS_ERRORS": "YES",
     "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
@@ -81,13 +83,11 @@ let project = Project(
                 "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
                 "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
                 "ENABLE_PREVIEWS": "YES",
-                "GENERATE_INFOPLIST_FILE": "YES",
                 "INFOPLIST_KEY_UIApplicationSceneManifest_Generation": "YES",
                 "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents": "YES",
                 "INFOPLIST_KEY_UILaunchScreen_Generation": "YES",
                 "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
                 "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
-                "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
                 "SWIFT_EMIT_LOC_STRINGS": "YES",
             ])
         ),
@@ -108,7 +108,6 @@ let project = Project(
                 .package(product: "ViewInspector", type: .runtime),
             ],
             settings: targetSettings([
-                "GENERATE_INFOPLIST_FILE": "YES",
                 "SWIFT_EMIT_LOC_STRINGS": "NO",
             ])
         ),
@@ -123,7 +122,6 @@ let project = Project(
             buildableFolders: ["Scratch CardUITests"],
             dependencies: [.target(name: appName)],
             settings: targetSettings([
-                "GENERATE_INFOPLIST_FILE": "YES",
                 "SWIFT_EMIT_LOC_STRINGS": "NO",
                 "TEST_TARGET_NAME": .string(appName),
             ])
