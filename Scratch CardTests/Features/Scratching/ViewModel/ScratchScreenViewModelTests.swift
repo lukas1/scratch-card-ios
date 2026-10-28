@@ -37,6 +37,14 @@ struct ScratchScreenViewModelTests {
         if let viewModel {
             await waitForRevealState(of: viewModel, toBe: true)
         }
+        let hasStartedScratching: Bool
+        do {
+            try await clock.checkSuspension()
+            hasStartedScratching = false
+        } catch {
+            hasStartedScratching = true
+        }
+        #expect(hasStartedScratching)
 
         viewModel = nil
         await clock.advance(by: .seconds(2))
