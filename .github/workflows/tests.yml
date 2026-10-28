@@ -28,5 +28,16 @@ jobs:
       - name: Generate Xcode project
         run: tuist generate --no-open
 
+      - name: Build app with standard Debug configuration
+        run: >-
+          xcodebuild build
+          -quiet
+          -skipPackagePluginValidation
+          -project "Scratch Card.xcodeproj"
+          -target "Scratch Card"
+          -configuration Debug
+          -sdk iphoneos
+          CODE_SIGNING_ALLOWED=NO
+
       - name: Run tests and coverage gate
         run: ./scripts/test-with-coverage.sh
