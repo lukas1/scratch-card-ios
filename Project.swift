@@ -145,6 +145,8 @@ let project = Project(
     additionalFiles: [
         "README.md",
         "AGENTS.md",
+        ".github/dependabot.yml",
+        ".github/workflows/dependabot-auto-merge.yml",
         ".github/workflows/tests.yml",
         .folderReference(path: "scripts"),
     ]
