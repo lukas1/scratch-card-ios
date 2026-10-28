@@ -34,7 +34,7 @@ jobs:
           -quiet
           -skipPackagePluginValidation
           -project "Scratch Card.xcodeproj"
-          -target "Scratch Card"
+          -scheme "Scratch Card"
           -configuration Debug
           -sdk iphoneos
           CODE_SIGNING_ALLOWED=NO
