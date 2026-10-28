@@ -1,5 +1,7 @@
 # Scratch Card iOS
 
+[![Tests](https://github.com/lukas1/scratch-card-ios/actions/workflows/tests.yml/badge.svg)](https://github.com/lukas1/scratch-card-ios/actions/workflows/tests.yml)
+
 The Xcode project is generated from [Project.swift](Project.swift) with Tuist. Commit changes to the manifest and source files; generated `.xcodeproj` and `.xcworkspace` files are ignored.
 
 ## Generate and open the project

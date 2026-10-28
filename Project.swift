@@ -145,6 +145,7 @@ let project = Project(
     additionalFiles: [
         "README.md",
         "AGENTS.md",
+        ".github/workflows/tests.yml",
         .folderReference(path: "scripts"),
     ]
 )

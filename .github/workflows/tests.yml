@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Unit and UI tests
+    runs-on: macos-26
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Install pinned Tuist version
+        uses: jdx/mise-action@v5.2.4
+
+      - name: Generate Xcode project
+        run: tuist generate --no-open
+
+      - name: Run tests and coverage gate
+        run: ./scripts/test-with-coverage.sh
