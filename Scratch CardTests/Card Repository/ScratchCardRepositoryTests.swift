@@ -100,6 +100,29 @@ struct ScratchCardRepositoryTests {
     }
 
     @MainActor
+    @Test func `GIVEN an activation in progress WHEN reset and new activation happen THEN the new activation remains active`() async throws {
+        let responseGate = TestResponseGate()
+        let clock = TestClock()
+        let repository = makeRepository(
+            clock: clock,
+            testSession: TestURLSession(responseGate: responseGate)
+        )
+        await scratch(repository, clock: clock)
+
+        repository.activateCard()
+        await responseGate.waitUntilRequested()
+
+        repository.reset()
+        await scratch(repository, clock: clock)
+        repository.activateCard()
+
+        #expect(repository.isActivating)
+        await responseGate.release()
+        #expect(try await waitUntil { !repository.isActivating })
+        #expect(repository.card == .activated(expectedCode))
+    }
+
+    @MainActor
     private func assertRevealDoesNotStart(
         for card: CardState,
         repository: ScratchCardRepository,
