@@ -8,6 +8,7 @@ result_bundle="${result_directory}/TestResults.xcresult"
 
 xcodebuild test \
     -quiet \
+    -skipPackagePluginValidation \
     -enableCodeCoverage YES \
     -parallel-testing-enabled NO \
     -resultBundlePath "${result_bundle}" \
