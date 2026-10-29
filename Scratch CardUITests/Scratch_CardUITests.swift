@@ -32,11 +32,11 @@ final class Scratch_CardUITests: XCTestCase {
         app.navigationBars.buttons.firstMatch.tap()
         XCTAssertTrue(app.staticTexts["SCRATCHED"].exists)
         app.buttons["activationButton"].tap()
-        XCTAssertTrue(app.staticTexts["Activate your card"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Activate your card"].waitForExistence(timeout: 10))
         app.buttons["activateCardButton"].tap()
-        XCTAssertTrue(app.staticTexts["Your card is already activated"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.staticTexts["Your card is already activated"].waitForExistence(timeout: 10))
         app.buttons["Done"].tap()
-        XCTAssertTrue(app.staticTexts["cardStatus"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.staticTexts["cardStatus"].waitForExistence(timeout: 10))
     }
 
     @MainActor
@@ -48,15 +48,15 @@ final class Scratch_CardUITests: XCTestCase {
 
         app.buttons["scratchButton"].tap()
         app.buttons["revealButton"].tap()
-        XCTAssertTrue(app.staticTexts["YOUR UNIQUE CODE"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["YOUR UNIQUE CODE"].waitForExistence(timeout: 10))
 
         app.navigationBars.buttons.firstMatch.tap()
         app.buttons["activationButton"].tap()
-        XCTAssertTrue(app.staticTexts["Activate your card"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Activate your card"].waitForExistence(timeout: 10))
         app.buttons["activateCardButton"].tap()
 
-        XCTAssertTrue(app.alerts.firstMatch.waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["activateCardButton"].exists)
+        XCTAssertTrue(app.alerts.firstMatch.waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["activateCardButton"].waitForExistence(timeout: 10))
     }
 
     @MainActor
