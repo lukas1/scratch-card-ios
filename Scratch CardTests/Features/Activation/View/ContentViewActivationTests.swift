@@ -62,7 +62,7 @@ struct ContentViewActivationTests {
         try sheet.find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
         await responseGate.waitUntilRequested()
         try sheet.dismiss()
-        await responseGate.release()
+        await responseGate.resumeResponses()
 
         #expect(try await waitUntilExists {
             try sut.inspect().navigationStack().alert()
@@ -83,7 +83,7 @@ struct ContentViewActivationTests {
         try sheet.find(viewWithAccessibilityIdentifier: "activateCardButton").button().tap()
         await responseGate.waitUntilRequested()
         try sheet.dismiss()
-        await responseGate.release()
+        await responseGate.resumeResponses()
 
         let activatedStatus = String(localized: .cardStatusActivated)
         #expect(try await waitUntilExists {

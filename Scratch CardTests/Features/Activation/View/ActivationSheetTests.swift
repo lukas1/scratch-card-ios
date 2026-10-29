@@ -34,7 +34,7 @@ struct ActivationSheetTests {
 
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activateCardButton").button().isDisabled())
         #expect(try sut.inspect().find(viewWithAccessibilityIdentifier: "activationProgress").isResponsive())
-        await responseGate.release()
+        await responseGate.resumeResponses()
         #expect(try await waitUntil { !model.isActivating })
     }
 

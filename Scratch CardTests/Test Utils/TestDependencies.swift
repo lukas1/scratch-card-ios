@@ -34,34 +34,60 @@ struct TestURLSession {
 
 actor TestResponseGate {
     private var hasReceivedRequest = false
-    private var isReleased = false
-    private var requestContinuation: CheckedContinuation<Void, Never>?
-    private var releaseContinuation: CheckedContinuation<Void, Never>?
+    private var areResponsesResumed = false
+    private var requestContinuations: [UUID: CheckedContinuation<Void, Never>] = [:]
+    private var responseContinuations: [UUID: CheckedContinuation<Void, Never>] = [:]
 
     func waitUntilRequested() async {
         guard !hasReceivedRequest else { return }
-        await withCheckedContinuation { continuation in
-            requestContinuation = continuation
+        let waiterID = UUID()
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                guard !hasReceivedRequest, !Task.isCancelled else {
+                    continuation.resume()
+                    return
+                }
+                requestContinuations[waiterID] = continuation
+            }
+        } onCancel: {
+            Task { await self.cancelRequestWaiter(id: waiterID) }
         }
     }
 
-    func waitUntilReleased() async {
-        guard !isReleased else { return }
-        await withCheckedContinuation { continuation in
-            releaseContinuation = continuation
+    func waitUntilResponsesAreResumed() async {
+        guard !areResponsesResumed else { return }
+        let waiterID = UUID()
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                guard !areResponsesResumed, !Task.isCancelled else {
+                    continuation.resume()
+                    return
+                }
+                responseContinuations[waiterID] = continuation
+            }
+        } onCancel: {
+            Task { await self.cancelResponseWaiter(id: waiterID) }
         }
     }
 
     func requestReceived() {
         hasReceivedRequest = true
-        requestContinuation?.resume()
-        requestContinuation = nil
+        requestContinuations.values.forEach { $0.resume() }
+        requestContinuations.removeAll()
     }
 
-    func release() {
-        isReleased = true
-        releaseContinuation?.resume()
-        releaseContinuation = nil
+    func resumeResponses() {
+        areResponsesResumed = true
+        responseContinuations.values.forEach { $0.resume() }
+        responseContinuations.removeAll()
+    }
+
+    private func cancelResponseWaiter(id: UUID) {
+        responseContinuations.removeValue(forKey: id)?.resume()
+    }
+
+    private func cancelRequestWaiter(id: UUID) {
+        requestContinuations.removeValue(forKey: id)?.resume()
     }
 }
 
@@ -107,6 +133,7 @@ private final class StubURLProtocol: URLProtocol {
     private static let lock = NSLock()
     nonisolated(unsafe) private static var responses: [String: Response] = [:]
     nonisolated(unsafe) private static var requests: [String: [URLRequest]] = [:]
+    private var loadingTask: Task<Void, Never>?
 
     static func register(host: String, response: Response) {
         lock.lock()
@@ -138,11 +165,12 @@ private final class StubURLProtocol: URLProtocol {
         Self.lock.unlock()
         guard let response else { return }
 
-        Task {
+        loadingTask = Task {
             if let gate = response.gate {
                 await gate.requestReceived()
-                await gate.waitUntilReleased()
+                await gate.waitUntilResponsesAreResumed()
             }
+            guard !Task.isCancelled else { return }
             guard let url = request.url,
                   let httpResponse = HTTPURLResponse(
                     url: url,
@@ -156,5 +184,8 @@ private final class StubURLProtocol: URLProtocol {
         }
     }
 
-    override func stopLoading() {}
+    override func stopLoading() {
+        loadingTask?.cancel()
+        loadingTask = nil
+    }
 }

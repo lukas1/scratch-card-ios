@@ -127,7 +127,7 @@ struct ScratchCardRepositoryTests {
         #expect(repository.isActivating)
         #expect(try await waitUntil { testSession.receivedRequestCount == 2 })
         #expect(testSession.receivedRequest?.url?.query?.contains("code=SC-4829-7317") == true)
-        await responseGate.release()
+        await responseGate.resumeResponses()
         #expect(try await waitUntil { !repository.isActivating })
         #expect(repository.card == .activated("SC-4829-7317"))
     }
