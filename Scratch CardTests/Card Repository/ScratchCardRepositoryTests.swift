@@ -102,10 +102,16 @@ struct ScratchCardRepositoryTests {
     @MainActor
     @Test func `GIVEN an activation in progress WHEN reset and new activation happen THEN the new activation remains active`() async throws {
         let responseGate = TestResponseGate()
+        let testSession = TestURLSession(responseGate: responseGate)
         let clock = TestClock()
+        var generatedCodeCount = 0
         let repository = makeRepository(
             clock: clock,
-            testSession: TestURLSession(responseGate: responseGate)
+            codeGenerator: {
+                generatedCodeCount += 1
+                return "SC-4829-\(7315 + generatedCodeCount)"
+            },
+            testSession: testSession
         )
         await scratch(repository, clock: clock)
 
@@ -113,13 +119,17 @@ struct ScratchCardRepositoryTests {
         await responseGate.waitUntilRequested()
 
         repository.reset()
+        #expect(!repository.isActivating)
         await scratch(repository, clock: clock)
         repository.activateCard()
 
+        #expect(repository.card == .scratched("SC-4829-7317"))
         #expect(repository.isActivating)
+        #expect(try await waitUntil { testSession.receivedRequestCount == 2 })
+        #expect(testSession.receivedRequest?.url?.query?.contains("code=SC-4829-7317") == true)
         await responseGate.release()
         #expect(try await waitUntil { !repository.isActivating })
-        #expect(repository.card == .activated(expectedCode))
+        #expect(repository.card == .activated("SC-4829-7317"))
     }
 
     @MainActor

@@ -26,6 +26,10 @@ struct TestURLSession {
     var receivedRequest: URLRequest? {
         StubURLProtocol.receivedRequest(for: host)
     }
+
+    var receivedRequestCount: Int {
+        StubURLProtocol.receivedRequestCount(for: host)
+    }
 }
 
 actor TestResponseGate {
@@ -102,19 +106,25 @@ private final class StubURLProtocol: URLProtocol {
 
     private static let lock = NSLock()
     nonisolated(unsafe) private static var responses: [String: Response] = [:]
-    nonisolated(unsafe) private static var requests: [String: URLRequest] = [:]
+    nonisolated(unsafe) private static var requests: [String: [URLRequest]] = [:]
 
     static func register(host: String, response: Response) {
         lock.lock()
         defer { lock.unlock() }
         responses[host] = response
-        requests.removeValue(forKey: host)
+        requests[host] = []
     }
 
     static func receivedRequest(for host: String) -> URLRequest? {
         lock.lock()
         defer { lock.unlock() }
-        return requests[host]
+        return requests[host]?.last
+    }
+
+    static func receivedRequestCount(for host: String) -> Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return requests[host]?.count ?? 0
     }
 
     override class func canInit(with request: URLRequest) -> Bool { true }
@@ -124,7 +134,7 @@ private final class StubURLProtocol: URLProtocol {
         guard let host = request.url?.host else { return }
         Self.lock.lock()
         let response = Self.responses[host]
-        Self.requests[host] = request
+        Self.requests[host, default: []].append(request)
         Self.lock.unlock()
         guard let response else { return }
 
